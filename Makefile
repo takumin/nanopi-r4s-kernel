@@ -20,15 +20,21 @@ LINUX_VERSION ?= 5.15.70
 .PHONY: default
 default: build
 
-.PHONY: build
-build:
+.PHONY: download
+download:
 ifeq ($(wildcard $(DOWNLOAD_DIR)/linux-$(LINUX_VERSION).tar.xz),)
 	@wget -P $(DOWNLOAD_DIR) https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-$(LINUX_VERSION).tar.xz
 endif
+
+.PHONY: extract
+extract: download
 ifeq ($(wildcard $(SOURCE_DIR)/linux/Makefile),)
 	@mkdir -p $(SOURCE_DIR)/linux
 	@tar -xvf $(DOWNLOAD_DIR)/linux-$(LINUX_VERSION).tar.xz -C $(SOURCE_DIR)/linux --strip-components=1
 endif
+
+.PHONY: defconfig
+defconfig: extract
 ifeq ($(wildcard $(BUILD_DIR)/linux/.config),)
 	@$(MAKE) \
 		-C $(SOURCE_DIR)/linux \
@@ -41,7 +47,22 @@ ifeq ($(wildcard $(BUILD_DIR)/linux/.config),)
 		KBUILD_BUILD_TIMESTAMP='' \
 		defconfig
 endif
-ifeq ($(wildcard $(BUILD_DIR)/linux/vmlinux),)
+
+.PHONY: menuconfig
+menuconfig: defconfig
+	@$(MAKE) \
+		-C $(SOURCE_DIR)/linux \
+		-j $(shell nproc) \
+		O=$(BUILD_DIR)/linux \
+		ARCH=arm64 \
+		CROSS_COMPILE=$(CROSS_COMPILE) \
+		CC="ccache $(CROSS_COMPILE)gcc" \
+		CXX="ccache $(CROSS_COMPILE)g++" \
+		KBUILD_BUILD_TIMESTAMP='' \
+		menuconfig
+
+.PHONY: build
+build: defconfig
 	@$(MAKE) \
 		-C $(SOURCE_DIR)/linux \
 		-j $(shell nproc) \
@@ -51,20 +72,6 @@ ifeq ($(wildcard $(BUILD_DIR)/linux/vmlinux),)
 		CC="ccache $(CROSS_COMPILE)gcc" \
 		CXX="ccache $(CROSS_COMPILE)g++" \
 		KBUILD_BUILD_TIMESTAMP=''
-endif
-
-.PHONY: menuconfig
-menuconfig:
-	@$(MAKE) \
-		-C $(SOURCE_DIR)/linux \
-		-j $(shell nproc) \
-		O=$(BUILD_DIR)/linux \
-		ARCH=arm64 \
-		CROSS_COMPILE=$(CROSS_COMPILE) \
-		CC="ccache $(CROSS_COMPILE)-gcc" \
-		CXX="ccache $(CROSS_COMPILE)-g++" \
-		KBUILD_BUILD_TIMESTAMP='' \
-		menuconfig
 
 .PHONY: clean
 clean:
