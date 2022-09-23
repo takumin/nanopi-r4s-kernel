@@ -73,6 +73,24 @@ build: defconfig
 		CXX="ccache $(CROSS_COMPILE)g++" \
 		KBUILD_BUILD_TIMESTAMP=''
 
+.PHONY: distrib
+distrib: build
+	@mkdir -p $(BUILD_DIR)/boot/dtbs
+	@$(MAKE) \
+		-C $(SOURCE_DIR)/linux \
+		-j $(shell nproc) \
+		O=$(BUILD_DIR)/linux \
+		ARCH=arm64 \
+		CROSS_COMPILE=$(CROSS_COMPILE) \
+		CC="ccache $(CROSS_COMPILE)gcc" \
+		CXX="ccache $(CROSS_COMPILE)g++" \
+		KBUILD_BUILD_TIMESTAMP='' \
+		INSTALL_MOD_PATH=$(BUILD_DIR)/modules \
+		INSTALL_HDR_PATH=$(BUILD_DIR)/headers \
+		INSTALL_DTBS_PATH=$(BUILD_DIR)/boot/dtbs \
+		INSTALL_PATH=$(BUILD_DIR)/boot \
+		zinstall modules_install headers_install dtbs_install
+
 .PHONY: clean
 clean:
 	@rm -fr $(BUILD_DIR)
