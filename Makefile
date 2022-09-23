@@ -11,10 +11,11 @@ unexport UNZIP
 export LC_ALL = C
 export CCACHE_DIR = $(HOME)/.cache/nanopi-r4s-kernel
 
-BUILD_DIR      ?= /tmp/nanopi-r4s-kernel
-DOWNLOAD_DIR   ?= $(CURDIR)/.dl
-SOURCE_DIR     ?= $(CURDIR)/.src
-LINUX_VERSION  ?= 5.15.70
+BUILD_DIR     ?= /tmp/nanopi-r4s-kernel
+DOWNLOAD_DIR  ?= $(CURDIR)/.dl
+SOURCE_DIR    ?= $(CURDIR)/.src
+CROSS_COMPILE ?= aarch64-none-linux-gnu-
+LINUX_VERSION ?= 5.15.70
 
 .PHONY: default
 default: build
@@ -34,9 +35,9 @@ ifeq ($(wildcard $(BUILD_DIR)/linux/.config),)
 		-j $(shell nproc) \
 		O=$(BUILD_DIR)/linux \
 		ARCH=arm64 \
-		CROSS_COMPILE=aarch64-none-linux-gnu- \
-		CC="ccache aarch64-none-linux-gnu-gcc" \
-		CXX="ccache aarch64-none-linux-gnu-g++" \
+		CROSS_COMPILE=$(CROSS_COMPILE) \
+		CC="ccache $(CROSS_COMPILE)gcc" \
+		CXX="ccache $(CROSS_COMPILE)g++" \
 		KBUILD_BUILD_TIMESTAMP='' \
 		defconfig
 endif
@@ -46,9 +47,9 @@ ifeq ($(wildcard $(BUILD_DIR)/linux/vmlinux),)
 		-j $(shell nproc) \
 		O=$(BUILD_DIR)/linux \
 		ARCH=arm64 \
-		CROSS_COMPILE=aarch64-none-linux-gnu- \
-		CC="ccache aarch64-none-linux-gnu-gcc" \
-		CXX="ccache aarch64-none-linux-gnu-g++" \
+		CROSS_COMPILE=$(CROSS_COMPILE) \
+		CC="ccache $(CROSS_COMPILE)gcc" \
+		CXX="ccache $(CROSS_COMPILE)g++" \
 		KBUILD_BUILD_TIMESTAMP=''
 endif
 
@@ -59,9 +60,9 @@ menuconfig:
 		-j $(shell nproc) \
 		O=$(BUILD_DIR)/linux \
 		ARCH=arm64 \
-		CROSS_COMPILE=aarch64-none-linux-gnu- \
-		CC="ccache aarch64-none-linux-gnu-gcc" \
-		CXX="ccache aarch64-none-linux-gnu-g++" \
+		CROSS_COMPILE=$(CROSS_COMPILE) \
+		CC="ccache $(CROSS_COMPILE)-gcc" \
+		CXX="ccache $(CROSS_COMPILE)-g++" \
 		KBUILD_BUILD_TIMESTAMP='' \
 		menuconfig
 
