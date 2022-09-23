@@ -11,26 +11,34 @@ unexport UNZIP
 export LC_ALL = C
 export CCACHE_DIR = $(HOME)/.cache/nanopi-r4s-kernel
 
-BUILD_DIR     ?= /tmp/nanopi-r4s-kernel
-DOWNLOAD_DIR  ?= $(CURDIR)/.dl
-SOURCE_DIR    ?= $(CURDIR)/.src
-CROSS_COMPILE ?= aarch64-none-linux-gnu-
-LINUX_VERSION ?= 5.15.70
+BUILD_DIR      ?= /tmp/nanopi-r4s-kernel
+DOWNLOAD_DIR   ?= $(CURDIR)/.dl
+SOURCE_DIR     ?= $(CURDIR)/.src
+CROSS_COMPILE  ?= aarch64-none-linux-gnu-
+LINUX_VERSION  ?= 5.15.70
+UBUNTU_RELEASE ?= jammy
 
 .PHONY: default
-default: build
+default: install
 
 .PHONY: download
 download:
 ifeq ($(wildcard $(DOWNLOAD_DIR)/linux-$(LINUX_VERSION).tar.xz),)
 	@wget -P $(DOWNLOAD_DIR) https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-$(LINUX_VERSION).tar.xz
 endif
+ifeq ($(wildcard $(DOWNLOAD_DIR)/$(UBUNTU_RELEASE)-base-arm64.tar.gz),)
+	@wget -P $(DOWNLOAD_DIR) http://cdimage.ubuntu.com/ubuntu-base/$(UBUNTU_RELEASE)/daily/current/$(UBUNTU_RELEASE)-base-arm64.tar.gz
+endif
 
 .PHONY: extract
 extract: download
-ifeq ($(wildcard $(SOURCE_DIR)/linux/Makefile),)
+ifeq ($(wildcard $(SOURCE_DIR)/linux),)
 	@mkdir -p $(SOURCE_DIR)/linux
 	@tar -xvf $(DOWNLOAD_DIR)/linux-$(LINUX_VERSION).tar.xz -C $(SOURCE_DIR)/linux --strip-components=1
+endif
+ifeq ($(wildcard $(BUILD_DIR)/distrib),)
+	@mkdir -p $(BUILD_DIR)/distrib
+	@tar -xvf $(DOWNLOAD_DIR)/$(UBUNTU_RELEASE)-base-arm64.tar.gz -C $(BUILD_DIR)/distrib
 endif
 
 .PHONY: defconfig
@@ -73,8 +81,8 @@ build: defconfig
 		CXX="ccache $(CROSS_COMPILE)g++" \
 		KBUILD_BUILD_TIMESTAMP=''
 
-.PHONY: distrib
-distrib: build
+.PHONY: install
+install: build
 	@mkdir -p $(BUILD_DIR)/boot/dtbs
 	@$(MAKE) \
 		-C $(SOURCE_DIR)/linux \
@@ -85,8 +93,8 @@ distrib: build
 		CC="ccache $(CROSS_COMPILE)gcc" \
 		CXX="ccache $(CROSS_COMPILE)g++" \
 		KBUILD_BUILD_TIMESTAMP='' \
-		INSTALL_MOD_PATH=$(BUILD_DIR)/modules \
-		INSTALL_HDR_PATH=$(BUILD_DIR)/headers \
+		INSTALL_MOD_PATH=$(BUILD_DIR)/distrib/usr/modules \
+		INSTALL_HDR_PATH=$(BUILD_DIR)/distrib/usr/headers \
 		INSTALL_DTBS_PATH=$(BUILD_DIR)/boot/dtbs \
 		INSTALL_PATH=$(BUILD_DIR)/boot \
 		zinstall modules_install headers_install dtbs_install
