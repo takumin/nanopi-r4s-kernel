@@ -43,8 +43,14 @@ ifeq ($(wildcard $(DISTRIB_DIR)),)
 	@sudo tar -xvf $(DOWNLOAD_DIR)/$(UBUNTU_RELEASE)-base-arm64.tar.gz -C $(DISTRIB_DIR)/rootfs
 endif
 
+.PHONY: patch
+patch: extract
+ifeq ($(wildcard $(SOURCE_DIR)/linux/arch/arm64/configs/nanopi4_linux_defconfig),)
+	patch -d $(SOURCE_DIR)/linux -p 1 -i $(CURDIR)/friendlyarm-kernel-rockchip-v5.15.y.patch
+endif
+
 .PHONY: defconfig
-defconfig: extract
+defconfig: patch
 ifeq ($(wildcard $(BUILD_DIR)/linux/.config),)
 	@$(MAKE) \
 		-C $(SOURCE_DIR)/linux \
@@ -55,7 +61,7 @@ ifeq ($(wildcard $(BUILD_DIR)/linux/.config),)
 		CC="ccache $(CROSS_COMPILE)gcc" \
 		CXX="ccache $(CROSS_COMPILE)g++" \
 		KBUILD_BUILD_TIMESTAMP='' \
-		defconfig
+		nanopi4_linux_defconfig
 endif
 
 .PHONY: menuconfig
