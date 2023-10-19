@@ -396,7 +396,7 @@ index 000000000000..d618867fda69
 +		};
 +	};
 diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index 7fdb41de01ec..593ce994247b 100644
+index 8c15593c0ca4..782379146ae3 100644
 --- a/arch/arm64/boot/dts/rockchip/Makefile
 +++ b/arch/arm64/boot/dts/rockchip/Makefile
 @@ -1,4 +1,5 @@
@@ -405,7 +405,7 @@ index 7fdb41de01ec..593ce994247b 100644
  dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-evb.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-engicam-px30-core-ctouch2.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-engicam-px30-core-ctouch2-of10.dtb
-@@ -10,6 +11,14 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3326-odroid-go2.dtb
+@@ -11,6 +12,15 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3326-odroid-go2.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-a1.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-evb.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2s.dtb
@@ -417,21 +417,29 @@ index 7fdb41de01ec..593ce994247b 100644
 +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2-rev20.dtb
 +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2-rev21.dtb
 +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2-rev22.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2-rev23.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-rock64.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-rock-pi-e.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-roc-cc.dtb
-@@ -37,6 +46,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopi-m4.dtb
+@@ -38,10 +48,14 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-kobol-helios64.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-leez-p710.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopc-t4.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopi-m4.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopi-m4-v2.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopi-m4b.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopi-neo4.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopi-r4s.dtb
 +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopi-r4se.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopi-r4s-enterprise.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopi-som.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopi-som-v2.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-orangepi.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-pinebook-pro.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-puma-haikou.dtb
-@@ -52,3 +62,8 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire-excavator.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399pro-rock-pi-n10.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-pinephone-pro.dtb
+@@ -72,3 +86,8 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-soquartz-cm4.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-bpi-r2-pro.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-evb1-v10.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-rock-3a.dtb
 +
 +# Enable symbols to support fdt overlays
 +ifeq ($(CONFIG_OF_OVERLAY),y)
@@ -2163,8 +2171,100 @@ index 000000000000..839856d9dd36
 +&r8153 {
 +	realtek,ledsel = <0x78>;
 +};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2-rev23.dts b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2-rev23.dts
+new file mode 100644
+index 000000000000..112ab3e38ae7
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2-rev23.dts
+@@ -0,0 +1,86 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (c) 2022 FriendlyElec Computer Tech. Co., Ltd.
++ * (http://www.friendlyarm.com)
++ */
++
++/dts-v1/;
++#include "rk3328-nanopi-r2-common.dtsi"
++
++/ {
++	model = "FriendlyElec NanoPi NEO3 Purple";
++	compatible = "friendlyelec,nanopi-neo3-purple", "rockchip,rk3328";
++
++	vcc_rtl8153: vcc-rtl8153-regulator {
++		compatible = "regulator-fixed";
++		gpio = <&gpio2 RK_PC6 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&usb30_en_drv>;
++		regulator-always-on;
++		regulator-name = "vcc_rtl8153";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		off-on-delay-us = <5000>;
++		enable-active-high;
++	};
++};
++
++&mach {
++	hwrev = <0x23>;
++	model = "NanoPi NEO3 Purple";
++};
++
++&emmc {
++	status = "okay";
++};
++
++&leds {
++	status = "okay";
++
++	led@1 {
++		gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_HIGH>;
++		label = "sys_led";
++		linux,default-trigger = "heartbeat";
++		linux,default-trigger-delay-ms = <0>;
++	};
++
++	led@2 {
++		gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_HIGH>;
++		label = "wan_led";
++	};
++
++	led@3 {
++		gpios = <&gpio2 RK_PC2 GPIO_ACTIVE_HIGH>;
++		label = "lan_led";
++	};
++
++	led@4 {
++		gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_HIGH>;
++		label = "red_led";
++		default-state = "off";
++	};
++};
++
++&leds_gpio {
++	rockchip,pins =
++		<0 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>,
++		<2 RK_PB7 RK_FUNC_GPIO &pcfg_pull_none>,
++		<2 RK_PC0 RK_FUNC_GPIO &pcfg_pull_none>,
++		<2 RK_PC2 RK_FUNC_GPIO &pcfg_pull_none>;
++};
++
++&vccio_sd {
++	status = "okay";
++};
++
++&io_domains {
++	vccio3-supply = <&vccio_sd>;
++};
++
++&sdmmc {
++	vqmmc-supply = <&vccio_sd>;
++	max-frequency = <150000000>;
++	sd-uhs-sdr50;
++	sd-uhs-sdr104;
++	status = "okay";
++};
 diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-index 3cbe83e6fb9a..bc89ee02e554 100644
+index 49ae15708a0b..f6ef1c0a7ba7 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
 +++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
 @@ -279,6 +279,17 @@ &pdmm0_sdi2_sleep
@@ -2185,7 +2285,7 @@ index 3cbe83e6fb9a..bc89ee02e554 100644
  	grf: syscon@ff100000 {
  		compatible = "rockchip,rk3328-grf", "syscon", "simple-mfd";
  		reg = <0x0 0xff100000 0x0 0x1000>;
-@@ -315,7 +326,7 @@ power-domain@RK3328_PD_VPU {
+@@ -319,7 +330,7 @@ power-domain@RK3328_PD_VPU {
  			};
  		};
  
@@ -2194,7 +2294,7 @@ index 3cbe83e6fb9a..bc89ee02e554 100644
  			compatible = "syscon-reboot-mode";
  			offset = <0x5c8>;
  			mode-normal = <BOOT_NORMAL>;
-@@ -788,7 +799,7 @@ cru: clock-controller@ff440000 {
+@@ -801,7 +812,7 @@ cru: clock-controller@ff440000 {
  			<&cru ACLK_BUS_PRE>, <&cru HCLK_BUS_PRE>,
  			<&cru PCLK_BUS_PRE>, <&cru ACLK_PERI_PRE>,
  			<&cru HCLK_PERI>, <&cru PCLK_PERI>,
@@ -2203,7 +2303,7 @@ index 3cbe83e6fb9a..bc89ee02e554 100644
  		assigned-clock-parents =
  			<&cru HDMIPHY>, <&cru PLL_APLL>,
  			<&cru PLL_GPLL>, <&xin24m>,
-@@ -809,7 +820,7 @@ cru: clock-controller@ff440000 {
+@@ -822,7 +833,7 @@ cru: clock-controller@ff440000 {
  			<150000000>, <75000000>,
  			<75000000>, <150000000>,
  			<75000000>, <75000000>,
@@ -2212,7 +2312,7 @@ index 3cbe83e6fb9a..bc89ee02e554 100644
  	};
  
  	usb2phy_grf: syscon@ff450000 {
-@@ -849,7 +860,48 @@ u2phy_host: host-port {
+@@ -862,7 +873,48 @@ u2phy_host: host-port {
  		};
  	};
  
@@ -2262,7 +2362,7 @@ index 3cbe83e6fb9a..bc89ee02e554 100644
  		compatible = "rockchip,rk3328-dw-mshc", "rockchip,rk3288-dw-mshc";
  		reg = <0x0 0xff500000 0x0 0x4000>;
  		interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-@@ -861,7 +913,7 @@ sdmmc: mmc@ff500000 {
+@@ -874,7 +926,7 @@ sdmmc: mmc@ff500000 {
  		status = "disabled";
  	};
  
@@ -2271,7 +2371,7 @@ index 3cbe83e6fb9a..bc89ee02e554 100644
  		compatible = "rockchip,rk3328-dw-mshc", "rockchip,rk3288-dw-mshc";
  		reg = <0x0 0xff510000 0x0 0x4000>;
  		interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-@@ -873,7 +925,7 @@ sdio: mmc@ff510000 {
+@@ -886,7 +938,7 @@ sdio: mmc@ff510000 {
  		status = "disabled";
  	};
  
@@ -2280,7 +2380,7 @@ index 3cbe83e6fb9a..bc89ee02e554 100644
  		compatible = "rockchip,rk3328-dw-mshc", "rockchip,rk3288-dw-mshc";
  		reg = <0x0 0xff520000 0x0 0x4000>;
  		interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-@@ -981,22 +1033,32 @@ usb_host0_ohci: usb@ff5d0000 {
+@@ -994,22 +1046,32 @@ usb_host0_ohci: usb@ff5d0000 {
  	};
  
  	usbdrd3: usb@ff600000 {
@@ -2325,7 +2425,7 @@ index 3cbe83e6fb9a..bc89ee02e554 100644
  
  	gic: interrupt-controller@ff811000 {
 diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopc-t4.dts b/arch/arm64/boot/dts/rockchip/rk3399-nanopc-t4.dts
-index 452728b82e42..c5925e228a77 100644
+index 3bf8f959e42c..b9f0ad947f57 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3399-nanopc-t4.dts
 +++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopc-t4.dts
 @@ -13,7 +13,7 @@
@@ -2337,7 +2437,25 @@ index 452728b82e42..c5925e228a77 100644
  
  	vcc12v0_sys: vcc12v0-sys {
  		compatible = "regulator-fixed";
-@@ -94,6 +94,11 @@ map3 {
+@@ -32,6 +32,17 @@ vcc5v0_host0: vcc5v0-host0 {
+ 		vin-supply = <&vcc5v0_sys>;
+ 	};
+ 
++	vcc3v3_pcie: vcc3v3-pcie-regulator {
++		compatible = "regulator-fixed";
++		regulator-boot-on;
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-name = "vcc3v3_pcie";
++		enable-active-high;
++		gpios = <&gpio2 RK_PA4 GPIO_ACTIVE_HIGH>;
++		vin-supply = <&vcc3v3_sys>;
++	};
++
+ 	adc-keys {
+ 		compatible = "adc-keys";
+ 		io-channels = <&saradc 1>;
+@@ -94,10 +105,38 @@ map3 {
  	};
  };
  
@@ -2346,11 +2464,89 @@ index 452728b82e42..c5925e228a77 100644
 +	model = "NanoPC-T4";
 +};
 +
++&i2s0_2ch_bus {
++	rockchip,pins =
++		<3 RK_PD0 1 &pcfg_pull_none>,
++		<3 RK_PD1 1 &pcfg_pull_none>,
++		<3 RK_PD2 1 &pcfg_pull_none>,
++		<3 RK_PD3 1 &pcfg_pull_none>,
++		<3 RK_PD7 1 &pcfg_pull_none>;
++};
++
++&i2s0 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2s0_2ch_bus>;
++	/delete-property/ pinctrl-1;
++	rockchip,playback-channels = <2>;
++	rockchip,capture-channels = <2>;
++	#sound-dai-cells = <0>;
++};
++
++&i2s1 {
++	status = "disabled";
++};
++
  &pcie0 {
- 	ep-gpios = <&gpio2 RK_PA4 GPIO_ACTIVE_HIGH>;
+-	ep-gpios = <&gpio2 RK_PA4 GPIO_ACTIVE_HIGH>;
  	num-lanes = <4>;
+-	vpcie3v3-supply = <&vcc3v3_sys>;
++	max-link-speed = <2>;
++	vpcie3v3-supply = <&vcc3v3_pcie>;
+ };
+ 
+ &pinctrl {
+@@ -109,6 +148,20 @@ ir_rx: ir-rx {
+ 	};
+ };
+ 
++&rt5651 {
++	status = "okay";
++};
++
++&rt5651_card {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&hp_det>;
++	simple-audio-card,hp-det-gpio = <&gpio4 RK_PD4 GPIO_ACTIVE_HIGH>;
++	simple-audio-card,cpu {
++		sound-dai = <&i2s0>;
++	};
++};
++
+ &sdhci {
+ 	mmc-hs400-1_8v;
+ 	mmc-hs400-enhanced-strobe;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4-v2.dts b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4-v2.dts
+new file mode 100644
+index 000000000000..2aeb0ca604fb
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4-v2.dts
+@@ -0,0 +1,22 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (c) 2023 FriendlyElec Computer Tech. Co., Ltd.
++ * (http://www.friendlyelec.com)
++ */
++
++/dts-v1/;
++#include "rk3399-nanopi-som.dts"
++
++/ {
++	model = "FriendlyElec NanoPi M4 Ver2.0";
++	compatible = "friendlyelec,nanopi-m4", "rockchip,rk3399";
++};
++
++&mach {
++	hwrev = <0x21>;
++	model = "NanoPi M4";
++};
++
++&vdd_center {
++	regulator-init-microvolt = <930000>;
++};
 diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4.dts b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4.dts
-index 60358ab8c7df..41519a160050 100644
+index 60358ab8c7df..ecf54866af92 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4.dts
 +++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4.dts
 @@ -14,7 +14,7 @@
@@ -2362,18 +2558,65 @@ index 60358ab8c7df..41519a160050 100644
  
  	vdd_5v: vdd-5v {
  		compatible = "regulator-fixed";
-@@ -48,6 +48,11 @@ vcc5v0_usb2: vcc5v0-usb2 {
+@@ -48,6 +48,19 @@ vcc5v0_usb2: vcc5v0-usb2 {
  	};
  };
  
 +&mach {
-+	hwrev = <0x21>;
++	hwrev = <1>;
 +	model = "NanoPi M4";
++};
++
++&rt5651 {
++	status = "okay";
++};
++
++&rt5651_card {
++	status = "okay";
 +};
 +
  &vcc3v3_sys {
  	vin-supply = <&vcc5v0_core>;
  };
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4b.dts b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4b.dts
+index 65cb21837b0c..4c21c3f1fe68 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4b.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-m4b.dts
+@@ -10,7 +10,7 @@
+ 
+ / {
+ 	model = "FriendlyElec NanoPi M4B";
+-	compatible = "friendlyarm,nanopi-m4b", "rockchip,rk3399";
++	compatible = "friendlyelec,nanopi-m4b", "rockchip,rk3399";
+ 
+ 	adc-keys {
+ 		compatible = "adc-keys";
+@@ -34,6 +34,14 @@ &i2c4 {
+ 	status = "disabled";
+ };
+ 
++&rt5651 {
++	status = "okay";
++};
++
++&rt5651_card {
++	status = "okay";
++};
++
+ &u2phy0_host {
+ 	phy-supply = <&vcc5v0_usb2>;
+ };
+@@ -46,6 +54,10 @@ &u2phy1_otg {
+ 	phy-supply = <&vcc5v0_usb1>;
+ };
+ 
++&usbdrd_dwc3_0 {
++	extcon = <&u2phy0>;
++};
++
+ &vbus_typec {
+ 	enable-active-high;
+ 	gpios = <&gpio4 RK_PD2 GPIO_ACTIVE_HIGH>;
 diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-neo4.dts b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-neo4.dts
 index 195410b089b9..c5a1847d33cb 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-neo4.dts
@@ -2400,7 +2643,7 @@ index 195410b089b9..c5a1847d33cb 100644
  	vin-supply = <&vcc5v0_core>;
  };
 diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts
-index cef4d18b599d..5b0907af2e97 100644
+index fe5b52610010..daebd56898b8 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts
 +++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts
 @@ -17,50 +17,53 @@
@@ -2464,9 +2707,9 @@ index cef4d18b599d..5b0907af2e97 100644
 -	gpio-keys {
 -		pinctrl-0 = <&reset_button_pin>;
 -
--		/delete-node/ power;
+-		/delete-node/ key-power;
 -
--		reset {
+-		key-reset {
 -			debounce-interval = <50>;
 -			gpios = <&gpio1 RK_PC6 GPIO_ACTIVE_LOW>;
 -			label = "reset";
@@ -2568,7 +2811,9 @@ index cef4d18b599d..5b0907af2e97 100644
 +		label = "wan_led";
 +	};
 +};
-+
+ 
+-		reset_button_pin: reset-button-pin {
+-			rockchip,pins = <1 RK_PC6 RK_FUNC_GPIO &pcfg_pull_up>;
 +&leds_pin {
 +	rockchip,pins =
 +		<0 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>,
@@ -2591,9 +2836,7 @@ index cef4d18b599d..5b0907af2e97 100644
 +		reg = <0x00000000 0 0 0 0>;
 +		#address-cells = <3>;
 +		#size-cells = <2>;
- 
--		reset_button_pin: reset-button-pin {
--			rockchip,pins = <1 RK_PC6 RK_FUNC_GPIO &pcfg_pull_up>;
++
 +		r8169: pcie@0,0 {
 +			reg = <0x000000 0 0 0 0>;
 +			local-mac-address = [ 00 00 00 00 00 00 ];
@@ -2601,6 +2844,17 @@ index cef4d18b599d..5b0907af2e97 100644
  		};
  	};
  };
+@@ -116,8 +170,8 @@ &u2phy0_host {
+ 	phy-supply = <&vdd_5v>;
+ };
+ 
+-&u2phy1_host {
+-	status = "disabled";
++&u2phy1_otg {
++	phy-supply = <&vdd_5v>;
+ };
+ 
+ &uart0 {
 diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4se.dts b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4se.dts
 new file mode 100644
 index 000000000000..526b0b559f34
@@ -2643,8 +2897,206 @@ index 000000000000..526b0b559f34
 +	mmc-hs400-enhanced-strobe;
 +	status = "okay";
 +};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-som-v2.dts b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-som-v2.dts
+new file mode 100644
+index 000000000000..7bb6db379540
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-som-v2.dts
+@@ -0,0 +1,22 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (c) 2023 FriendlyElec Computer Tech. Co., Ltd.
++ * (http://www.friendlyelec.com)
++ */
++
++/dts-v1/;
++#include "rk3399-nanopi-som.dts"
++
++/ {
++	model = "FriendlyElec SOM-RK3399";
++	compatible = "friendlyelec,som-rk3399", "rockchip,rk3399";
++};
++
++&mach {
++	hwrev = <7>;
++	model = "SOM-RK3399";
++};
++
++&vdd_center {
++	regulator-init-microvolt = <930000>;
++};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-som.dts b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-som.dts
+new file mode 100644
+index 000000000000..4e32223e4d84
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-som.dts
+@@ -0,0 +1,164 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * FriendlyElec SOM-RK3399 board device tree source
++ *
++ * Copyright (c) 2018 FriendlyElec Computer Tech. Co., Ltd.
++ * (http://www.friendlyarm.com)
++ *
++ * Copyright (c) 2018 Collabora Ltd.
++ */
++
++/dts-v1/;
++#include "rk3399-nanopi4.dtsi"
++
++/ {
++	model = "FriendlyElec SOM-RK3399";
++	compatible = "friendlyelec,som-rk3399", "rockchip,rk3399";
++
++	vcc12v0_sys: vcc12v0-sys {
++		compatible = "regulator-fixed";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-max-microvolt = <12000000>;
++		regulator-min-microvolt = <12000000>;
++		regulator-name = "vcc12v0_sys";
++	};
++
++	vcc5v0_host0: vcc5v0-host0 {
++		compatible = "regulator-fixed";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-name = "vcc5v0_host0";
++		vin-supply = <&vcc5v0_sys>;
++	};
++
++	vcc3v3_pcie: vcc3v3-pcie-regulator {
++		compatible = "regulator-fixed";
++		regulator-boot-on;
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-name = "vcc3v3_pcie";
++		enable-active-high;
++		gpios = <&gpio2 RK_PA4 GPIO_ACTIVE_HIGH>;
++		vin-supply = <&vcc5v0_sys>;
++	};
++
++	adc-keys {
++		compatible = "adc-keys";
++		io-channels = <&saradc 1>;
++		io-channel-names = "buttons";
++		keyup-threshold-microvolt = <1800000>;
++		poll-interval = <100>;
++
++		button-recovery {
++			label = "Recovery";
++			linux,code = <KEY_VENDOR>;
++			press-threshold-microvolt = <18000>;
++		};
++	};
++
++	fan: pwm-fan {
++		compatible = "pwm-fan";
++		/*
++		 * With 20KHz PWM and an EVERCOOL EC4007H12SA fan, these levels
++		 * work out to 0, ~1200, ~3000, and 5000RPM respectively.
++		 */
++		cooling-levels = <0 12 18 255>;
++		#cooling-cells = <2>;
++		fan-supply = <&vcc12v0_sys>;
++		pwms = <&pwm1 0 50000 0>;
++	};
++};
++
++&cpu_thermal {
++	trips {
++		cpu_warm: cpu_warm {
++			temperature = <55000>;
++			hysteresis = <2000>;
++			type = "active";
++		};
++
++		cpu_hot: cpu_hot {
++			temperature = <65000>;
++			hysteresis = <2000>;
++			type = "active";
++		};
++	};
++
++	cooling-maps {
++		map2 {
++			trip = <&cpu_warm>;
++			cooling-device = <&fan THERMAL_NO_LIMIT 1>;
++		};
++
++		map3 {
++			trip = <&cpu_hot>;
++			cooling-device = <&fan 2 THERMAL_NO_LIMIT>;
++		};
++	};
++};
++
++&mach {
++	hwrev = <6>;
++	model = "SOM-RK3399";
++};
++
++&pcie0 {
++	num-lanes = <4>;
++	max-link-speed = <2>;
++	vpcie3v3-supply = <&vcc3v3_pcie>;
++};
++
++&pinctrl {
++	pcie {
++		/omit-if-no-ref/
++		pcie_gpios: pcie-gpios {
++			rockchip,pins =
++				<2 RK_PA4 RK_FUNC_GPIO &pcfg_pull_up>,
++				<2 RK_PA3 RK_FUNC_GPIO &pcfg_pull_up>,
++				<2 RK_PA2 RK_FUNC_GPIO &pcfg_pull_up>;
++		};
++	};
++};
++
++&rt5651 {
++	status = "okay";
++};
++
++&rt5651_card {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&hp_det>;
++	simple-audio-card,hp-det-gpio = <&gpio4 RK_PD4 GPIO_ACTIVE_HIGH>;
++};
++
++&sdhci {
++	mmc-hs400-1_8v;
++	mmc-hs400-enhanced-strobe;
++};
++
++&sdmmc0_pwr_h {
++	rockchip,pins = <0 RK_PA1 RK_FUNC_GPIO &pcfg_pull_up>;
++};
++
++&u2phy0_host {
++	phy-supply = <&vcc5v0_host0>;
++};
++
++&u2phy1_host {
++	phy-supply = <&vcc5v0_host0>;
++};
++
++&vcc5v0_sys {
++	vin-supply = <&vcc12v0_sys>;
++};
++
++&vcc3v3_sys {
++	vin-supply = <&vcc12v0_sys>;
++};
++
++&vbus_typec {
++	enable-active-high;
++	gpios = <&gpio4 RK_PD2 GPIO_ACTIVE_HIGH>;
++	vin-supply = <&vcc5v0_sys>;
++};
 diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi
-index 8c0ff6c96e03..fcb564af9a75 100644
+index b6e082f1f6d9..523b2b675273 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi
 +++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi
 @@ -13,6 +13,7 @@
@@ -2677,6 +3129,15 @@ index 8c0ff6c96e03..fcb564af9a75 100644
  	clkin_gmac: external-gmac-clock {
  		compatible = "fixed-clock";
  		clock-frequency = <125000000>;
+@@ -70,7 +81,7 @@ vcc3v0_sd: vcc3v0-sd {
+ 		gpio = <&gpio0 RK_PA1 GPIO_ACTIVE_HIGH>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&sdmmc0_pwr_h>;
+-		regulator-always-on;
++		regulator-boot-on;
+ 		regulator-min-microvolt = <3000000>;
+ 		regulator-max-microvolt = <3000000>;
+ 		regulator-name = "vcc3v0_sd";
 @@ -105,11 +116,11 @@ vbus_typec: vbus-typec {
  		regulator-name = "vbus_typec";
  	};
@@ -2689,9 +3150,9 @@ index 8c0ff6c96e03..fcb564af9a75 100644
 -		pinctrl-0 = <&power_key>;
 +		pinctrl-0 = <&key_pins>;
  
- 		power {
+ 		key-power {
  			debounce-interval = <100>;
-@@ -123,7 +134,7 @@ power {
+@@ -123,7 +134,7 @@ key-power {
  	leds: gpio-leds {
  		compatible = "gpio-leds";
  		pinctrl-names = "default";
@@ -2700,7 +3161,7 @@ index 8c0ff6c96e03..fcb564af9a75 100644
  
  		status_led: led-0 {
  			gpios = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
-@@ -132,6 +143,36 @@ status_led: led-0 {
+@@ -132,6 +143,62 @@ status_led: led-0 {
  		};
  	};
  
@@ -2734,21 +3195,89 @@ index 8c0ff6c96e03..fcb564af9a75 100644
 +		status = "okay";
 +	};
 +
++	rt5651_card: rt5651-sound {
++		compatible = "simple-audio-card";
++		status = "disabled";
++
++		simple-audio-card,name = "realtek,rt5651-codec";
++		simple-audio-card,format = "i2s";
++		simple-audio-card,mclk-fs = <256>;
++		simple-audio-card,hp-pin-name = "Headphone Jack";
++
++		simple-audio-card,widgets =
++			"Headphone", "Headphone Jack",
++			"Microphone", "Microphone Jack";
++		simple-audio-card,routing =
++			"Headphone Jack", "HPOL",
++			"Headphone Jack", "HPOR",
++			"IN1P", "Microphone Jack",
++			"Microphone Jack", "micbias1";
++
++		simple-audio-card,cpu {
++			sound-dai = <&i2s1>;
++		};
++		simple-audio-card,codec {
++			sound-dai = <&rt5651>;
++		};
++	};
++
  	sdio_pwrseq: sdio-pwrseq {
  		compatible = "mmc-pwrseq-simple";
  		clocks = <&rk808 1>;
-@@ -502,6 +543,10 @@ &io_domains {
+@@ -463,7 +530,19 @@ &i2c1 {
+ 	clock-frequency = <200000>;
+ 	i2c-scl-rising-time-ns = <150>;
+ 	i2c-scl-falling-time-ns = <30>;
++	io-supply = <&iodomain_supply>;
+ 	status = "okay";
++
++	rt5651: rt5651@1a {
++		compatible = "rockchip,rt5651";
++		reg = <0x1a>;
++		clocks = <&cru SCLK_I2S_8CH_OUT>;
++		clock-names = "mclk";
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2s_8ch_mclk>;
++		#sound-dai-cells = <0>;
++		status = "disabled";
++	};
+ };
+ 
+ &i2c2 {
+@@ -491,6 +570,13 @@ &i2c7 {
  	status = "okay";
  };
  
-+&reboot_mode {
++&i2s1 {
 +	status = "okay";
++	rockchip,playback-channels = <2>;
++	rockchip,capture-channels = <2>;
++	#sound-dai-cells = <0>;
 +};
 +
+ &i2s2 {
+ 	status = "okay";
+ };
+@@ -501,6 +587,18 @@ &io_domains {
+ 	sdmmc-supply = <&vcc_sdio>;
+ 	gpio1830-supply = <&vcc_3v0>;
+ 	status = "okay";
++
++	iodomain_supply: iodomain-supply {
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-name = "iodomain_supply";
++	};
++};
++
++&reboot_mode {
++	status = "okay";
+ };
+ 
  &pcie_phy {
- 	assigned-clock-parents = <&cru SCLK_PCIEPHY_REF100M>;
- 	assigned-clock-rates = <100000000>;
-@@ -524,7 +569,7 @@ fusb0_int: fusb0-int {
+@@ -525,7 +623,7 @@ fusb0_int: fusb0-int {
  	};
  
  	gpio-leds {
@@ -2757,7 +3286,28 @@ index 8c0ff6c96e03..fcb564af9a75 100644
  			rockchip,pins = <0 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
  		};
  	};
-@@ -554,7 +599,7 @@ pmic_int_l: pmic-int-l {
+@@ -540,6 +638,20 @@ phy_rstb: phy-rstb {
+ 		};
+ 	};
+ 
++	headphone {
++		/omit-if-no-ref/
++		hp_det: hp-det {
++			rockchip,pins = <4 RK_PD4 RK_FUNC_GPIO &pcfg_pull_up>;
++		};
++	};
++
++	i2s0 {
++		/omit-if-no-ref/
++		i2s_8ch_mclk: i2s-8ch-mclk {
++			rockchip,pins = <4 RK_PA0 1 &pcfg_pull_none>;
++		};
++	};
++
+ 	pmic {
+ 		cpu_b_sleep: cpu-b-sleep {
+ 			rockchip,pins = <1 RK_PC1 RK_FUNC_GPIO &pcfg_pull_down>;
+@@ -555,7 +667,7 @@ pmic_int_l: pmic-int-l {
  	};
  
  	rockchip-key {
@@ -2766,7 +3316,7 @@ index 8c0ff6c96e03..fcb564af9a75 100644
  			rockchip,pins = <0 RK_PA5 RK_FUNC_GPIO &pcfg_pull_up>;
  		};
  	};
-@@ -608,6 +653,10 @@ &pwm2 {
+@@ -609,6 +721,10 @@ &pwm2 {
  	status = "okay";
  };
  
@@ -2777,7 +3327,7 @@ index 8c0ff6c96e03..fcb564af9a75 100644
  &saradc {
  	vref-supply = <&vcca1v8_s3>;
  	status = "okay";
-@@ -615,6 +664,7 @@ &saradc {
+@@ -616,6 +732,7 @@ &saradc {
  
  &sdhci {
  	bus-width = <8>;
@@ -2785,7 +3335,7 @@ index 8c0ff6c96e03..fcb564af9a75 100644
  	mmc-hs200-1_8v;
  	non-removable;
  	status = "okay";
-@@ -644,6 +694,7 @@ &sdmmc {
+@@ -645,6 +762,7 @@ &sdmmc {
  	sd-uhs-sdr104;
  	vmmc-supply = <&vcc3v0_sd>;
  	vqmmc-supply = <&vcc_sdio>;
@@ -2793,7 +3343,7 @@ index 8c0ff6c96e03..fcb564af9a75 100644
  	status = "okay";
  };
  
-@@ -720,10 +771,14 @@ &usbdrd3_1 {
+@@ -721,10 +839,14 @@ &usbdrd3_1 {
  };
  
  &usbdrd_dwc3_0 {
@@ -2809,7 +3359,7 @@ index 8c0ff6c96e03..fcb564af9a75 100644
  	status = "okay";
  };
 diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-index 4255e2d7a72f..28f2282ec81b 100644
+index 59858f2dc8b9..0c1c79afdd01 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
 +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
 @@ -9,6 +9,7 @@
@@ -2820,7 +3370,7 @@ index 4255e2d7a72f..28f2282ec81b 100644
  #include <dt-bindings/thermal/thermal.h>
  
  / {
-@@ -1122,6 +1123,16 @@ pmu_io_domains: io-domains {
+@@ -1191,6 +1192,16 @@ pmu_io_domains: io-domains {
  			compatible = "rockchip,rk3399-pmu-io-voltage-domain";
  			status = "disabled";
  		};
@@ -2837,15 +3387,7 @@ index 4255e2d7a72f..28f2282ec81b 100644
  	};
  
  	spi3: spi@ff350000 {
-@@ -1479,6 +1490,7 @@ emmc_phy: phy@f780 {
- 			clock-names = "emmcclk";
- 			drive-impedance-ohm = <50>;
- 			#phy-cells = <0>;
-+			rockchip,enable-strobe-pulldown;
- 			status = "disabled";
- 		};
- 
-@@ -1617,6 +1629,16 @@ i2s2: i2s@ff8a0000 {
+@@ -1700,6 +1711,16 @@ i2s2: i2s@ff8a0000 {
  		status = "disabled";
  	};
  
@@ -2861,25 +3403,29 @@ index 4255e2d7a72f..28f2282ec81b 100644
 +
  	vopl: vop@ff8f0000 {
  		compatible = "rockchip,rk3399-vop-lit";
- 		reg = <0x0 0xff8f0000 0x0 0x3efc>;
+ 		reg = <0x0 0xff8f0000 0x0 0x2000>, <0x0 0xff8f2000 0x0 0x400>;
 diff --git a/arch/arm64/configs/friendlywrt.config b/arch/arm64/configs/friendlywrt.config
 new file mode 100644
-index 000000000000..4113628eb85b
+index 000000000000..5265ac343d77
 --- /dev/null
 +++ b/arch/arm64/configs/friendlywrt.config
-@@ -0,0 +1,6 @@
+@@ -0,0 +1,10 @@
 +CONFIG_ARM64_VA_BITS=48
 +# CONFIG_ARM64_VA_BITS_39 is not set
 +CONFIG_ARM64_VA_BITS_48=y
 +CONFIG_HZ=100
 +CONFIG_HZ_100=y
 +# CONFIG_HZ_300 is not set
++CONFIG_NF_CONNTRACK_PROCFS=y
++CONFIG_BRIDGE=y
++CONFIG_VLAN_8021Q=y
++# CONFIG_USB_GSPCA is not set
 diff --git a/arch/arm64/configs/nanopi-r2_linux_defconfig b/arch/arm64/configs/nanopi-r2_linux_defconfig
 new file mode 100644
-index 000000000000..aad8de8351d8
+index 000000000000..0c27aced9193
 --- /dev/null
 +++ b/arch/arm64/configs/nanopi-r2_linux_defconfig
-@@ -0,0 +1,1661 @@
+@@ -0,0 +1,1662 @@
 +CONFIG_DEFAULT_HOSTNAME="localhost"
 +CONFIG_SYSVIPC=y
 +CONFIG_POSIX_MQUEUE=y
@@ -2888,7 +3434,7 @@ index 000000000000..aad8de8351d8
 +CONFIG_HIGH_RES_TIMERS=y
 +CONFIG_BPF_SYSCALL=y
 +CONFIG_BPF_JIT=y
-+CONFIG_PREEMPT=y
++CONFIG_PREEMPT_VOLUNTARY=y
 +CONFIG_BSD_PROCESS_ACCT=y
 +CONFIG_BSD_PROCESS_ACCT_V3=y
 +CONFIG_TASKSTATS=y
@@ -2919,9 +3465,7 @@ index 000000000000..aad8de8351d8
 +# CONFIG_RD_LZMA is not set
 +# CONFIG_RD_XZ is not set
 +# CONFIG_RD_LZO is not set
-+CONFIG_USERFAULTFD=y
 +CONFIG_EMBEDDED=y
-+# CONFIG_COMPAT_BRK is not set
 +CONFIG_PROFILING=y
 +CONFIG_ARCH_ROCKCHIP=y
 +# CONFIG_ARM64_ERRATUM_826319 is not set
@@ -2929,13 +3473,22 @@ index 000000000000..aad8de8351d8
 +# CONFIG_ARM64_ERRATUM_824069 is not set
 +# CONFIG_ARM64_ERRATUM_819472 is not set
 +# CONFIG_ARM64_ERRATUM_832075 is not set
-+# CONFIG_ARM64_ERRATUM_1024718 is not set
 +# CONFIG_ARM64_ERRATUM_1418040 is not set
 +# CONFIG_ARM64_ERRATUM_1165522 is not set
 +# CONFIG_ARM64_ERRATUM_1286807 is not set
 +# CONFIG_ARM64_ERRATUM_1463225 is not set
++# CONFIG_ARM64_ERRATUM_1542419 is not set
++# CONFIG_ARM64_ERRATUM_1508412 is not set
++# CONFIG_ARM64_ERRATUM_2051678 is not set
++# CONFIG_ARM64_ERRATUM_2077057 is not set
++# CONFIG_ARM64_ERRATUM_2658417 is not set
++# CONFIG_ARM64_ERRATUM_2054223 is not set
++# CONFIG_ARM64_ERRATUM_2067961 is not set
++# CONFIG_ARM64_ERRATUM_2441009 is not set
++# CONFIG_ARM64_ERRATUM_2457168 is not set
 +# CONFIG_CAVIUM_ERRATUM_22375 is not set
 +# CONFIG_CAVIUM_ERRATUM_23154 is not set
++# CONFIG_CAVIUM_ERRATUM_27456 is not set
 +# CONFIG_CAVIUM_ERRATUM_30115 is not set
 +# CONFIG_CAVIUM_TX2_ERRATUM_219 is not set
 +# CONFIG_FUJITSU_ERRATUM_010001 is not set
@@ -2944,9 +3497,11 @@ index 000000000000..aad8de8351d8
 +# CONFIG_QCOM_FALKOR_ERRATUM_1009 is not set
 +# CONFIG_QCOM_QDF2400_ERRATUM_0065 is not set
 +# CONFIG_QCOM_FALKOR_ERRATUM_E1041 is not set
++# CONFIG_NVIDIA_CARMEL_CNP_ERRATUM is not set
 +# CONFIG_SOCIONEXT_SYNQUACER_PREITS is not set
 +CONFIG_SCHED_MC=y
 +CONFIG_NR_CPUS=8
++CONFIG_ARM64_SW_TTBR0_PAN=y
 +CONFIG_COMPAT=y
 +CONFIG_ARMV8_DEPRECATED=y
 +CONFIG_SWP_EMULATION=y
@@ -2957,7 +3512,6 @@ index 000000000000..aad8de8351d8
 +CONFIG_WQ_POWER_EFFICIENT_DEFAULT=y
 +CONFIG_CPU_IDLE=y
 +CONFIG_CPU_IDLE_GOV_LADDER=y
-+CONFIG_ARM_CPUIDLE=y
 +CONFIG_ARM_PSCI_CPUIDLE=y
 +CONFIG_CPU_FREQ=y
 +CONFIG_CPU_FREQ_STAT=y
@@ -2967,15 +3521,6 @@ index 000000000000..aad8de8351d8
 +CONFIG_CPU_FREQ_GOV_ONDEMAND=y
 +CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
 +CONFIG_CPUFREQ_DT=y
-+CONFIG_CRYPTO_SHA512_ARM64=y
-+CONFIG_CRYPTO_SHA1_ARM64_CE=y
-+CONFIG_CRYPTO_SHA2_ARM64_CE=y
-+CONFIG_CRYPTO_SHA512_ARM64_CE=m
-+CONFIG_CRYPTO_GHASH_ARM64_CE=y
-+CONFIG_CRYPTO_CRCT10DIF_ARM64_CE=m
-+CONFIG_CRYPTO_AES_ARM64_CE_CCM=y
-+CONFIG_CRYPTO_AES_ARM64_CE_BLK=y
-+CONFIG_CRYPTO_AES_ARM64_BS=m
 +CONFIG_JUMP_LABEL=y
 +CONFIG_MODULES=y
 +CONFIG_MODULE_UNLOAD=y
@@ -2987,18 +3532,18 @@ index 000000000000..aad8de8351d8
 +CONFIG_IOSCHED_BFQ=m
 +CONFIG_BFQ_GROUP_IOSCHED=y
 +CONFIG_BINFMT_MISC=m
++CONFIG_ZSWAP=y
++# CONFIG_COMPAT_BRK is not set
 +CONFIG_TRANSPARENT_HUGEPAGE=y
 +CONFIG_TRANSPARENT_HUGEPAGE_MADVISE=y
-+CONFIG_CLEANCACHE=y
-+CONFIG_FRONTSWAP=y
 +CONFIG_CMA=y
-+CONFIG_ZSMALLOC=y
++CONFIG_USERFAULTFD=y
 +CONFIG_NET=y
 +CONFIG_PACKET=y
 +CONFIG_PACKET_DIAG=m
 +CONFIG_UNIX=y
 +CONFIG_UNIX_DIAG=m
-+CONFIG_XFRM_USER=y
++CONFIG_XFRM_USER=m
 +CONFIG_NET_KEY=m
 +CONFIG_INET=y
 +CONFIG_IP_MULTICAST=y
@@ -3015,6 +3560,7 @@ index 000000000000..aad8de8351d8
 +CONFIG_NET_IPGRE=m
 +CONFIG_NET_IPGRE_BROADCAST=y
 +CONFIG_IP_MROUTE=y
++CONFIG_IP_MROUTE_MULTIPLE_TABLES=y
 +CONFIG_IP_PIMSM_V1=y
 +CONFIG_IP_PIMSM_V2=y
 +CONFIG_NET_IPVTI=m
@@ -3080,7 +3626,6 @@ index 000000000000..aad8de8351d8
 +CONFIG_NFT_NUMGEN=m
 +CONFIG_NFT_CT=m
 +CONFIG_NFT_FLOW_OFFLOAD=m
-+CONFIG_NFT_COUNTER=m
 +CONFIG_NFT_CONNLIMIT=m
 +CONFIG_NFT_LOG=m
 +CONFIG_NFT_LIMIT=m
@@ -3118,6 +3663,7 @@ index 000000000000..aad8de8351d8
 +CONFIG_NETFILTER_XT_TARGET_MARK=m
 +CONFIG_NETFILTER_XT_TARGET_NFLOG=m
 +CONFIG_NETFILTER_XT_TARGET_NFQUEUE=m
++CONFIG_NETFILTER_XT_TARGET_FLOWOFFLOAD=m
 +CONFIG_NETFILTER_XT_TARGET_TEE=m
 +CONFIG_NETFILTER_XT_TARGET_TPROXY=m
 +CONFIG_NETFILTER_XT_TARGET_TRACE=m
@@ -3207,7 +3753,6 @@ index 000000000000..aad8de8351d8
 +CONFIG_NFT_DUP_IPV4=m
 +CONFIG_NFT_FIB_IPV4=m
 +CONFIG_NF_TABLES_ARP=y
-+CONFIG_NF_FLOW_TABLE_IPV4=m
 +CONFIG_NF_LOG_ARP=m
 +CONFIG_IP_NF_IPTABLES=m
 +CONFIG_IP_NF_MATCH_AH=m
@@ -3232,7 +3777,6 @@ index 000000000000..aad8de8351d8
 +CONFIG_IP_NF_ARP_MANGLE=m
 +CONFIG_NFT_DUP_IPV6=m
 +CONFIG_NFT_FIB_IPV6=m
-+CONFIG_NF_FLOW_TABLE_IPV6=m
 +CONFIG_IP6_NF_IPTABLES=m
 +CONFIG_IP6_NF_MATCH_AH=m
 +CONFIG_IP6_NF_MATCH_EUI64=m
@@ -3254,7 +3798,6 @@ index 000000000000..aad8de8351d8
 +CONFIG_IP6_NF_NAT=m
 +CONFIG_IP6_NF_TARGET_MASQUERADE=m
 +CONFIG_IP6_NF_TARGET_NPT=m
-+CONFIG_DECNET_NF_GRABULATOR=m
 +CONFIG_NF_TABLES_BRIDGE=m
 +CONFIG_NFT_BRIDGE_META=m
 +CONFIG_NFT_BRIDGE_REJECT=m
@@ -3305,7 +3848,6 @@ index 000000000000..aad8de8351d8
 +CONFIG_VLAN_8021Q=m
 +CONFIG_VLAN_8021Q_GVRP=y
 +CONFIG_VLAN_8021Q_MVRP=y
-+CONFIG_DECNET=m
 +CONFIG_LLC2=m
 +CONFIG_ATALK=m
 +CONFIG_DEV_APPLETALK=m
@@ -3347,13 +3889,10 @@ index 000000000000..aad8de8351d8
 +CONFIG_NET_SCH_INGRESS=m
 +CONFIG_NET_SCH_PLUG=m
 +CONFIG_NET_CLS_BASIC=m
-+CONFIG_NET_CLS_TCINDEX=m
 +CONFIG_NET_CLS_ROUTE4=m
 +CONFIG_NET_CLS_FW=m
 +CONFIG_NET_CLS_U32=m
 +CONFIG_CLS_U32_MARK=y
-+CONFIG_NET_CLS_RSVP=m
-+CONFIG_NET_CLS_RSVP6=m
 +CONFIG_NET_CLS_FLOW=m
 +CONFIG_NET_CLS_CGROUP=m
 +CONFIG_NET_CLS_BPF=m
@@ -3404,17 +3943,6 @@ index 000000000000..aad8de8351d8
 +CONFIG_YAM=m
 +CONFIG_CAN=m
 +CONFIG_CAN_J1939=m
-+CONFIG_CAN_VCAN=m
-+CONFIG_CAN_SLCAN=m
-+CONFIG_CAN_MCP251X=m
-+CONFIG_CAN_8DEV_USB=m
-+CONFIG_CAN_EMS_USB=m
-+CONFIG_CAN_ESD_USB2=m
-+CONFIG_CAN_GS_USB=m
-+CONFIG_CAN_KVASER_USB=m
-+CONFIG_CAN_MCBA_USB=m
-+CONFIG_CAN_PEAK_USB=m
-+CONFIG_CAN_UCAN=m
 +CONFIG_BT=y
 +CONFIG_BT_RFCOMM=y
 +CONFIG_BT_RFCOMM_TTY=y
@@ -3486,6 +4014,7 @@ index 000000000000..aad8de8351d8
 +CONFIG_PCI=y
 +CONFIG_PCIEPORTBUS=y
 +CONFIG_PCIEASPM_POWERSAVE=y
++# CONFIG_VGA_ARB is not set
 +CONFIG_PCIE_ROCKCHIP_HOST=y
 +CONFIG_UEVENT_HELPER=y
 +CONFIG_DEVTMPFS=y
@@ -3500,15 +4029,12 @@ index 000000000000..aad8de8351d8
 +CONFIG_ZRAM_WRITEBACK=y
 +CONFIG_ZRAM_MEMORY_TRACKING=y
 +CONFIG_BLK_DEV_LOOP=y
-+CONFIG_BLK_DEV_CRYPTOLOOP=m
 +CONFIG_BLK_DEV_DRBD=m
 +CONFIG_BLK_DEV_NBD=m
-+CONFIG_BLK_DEV_SX8=m
 +CONFIG_BLK_DEV_RAM=y
 +CONFIG_BLK_DEV_RAM_COUNT=8
 +CONFIG_ATA_OVER_ETH=m
 +CONFIG_VIRTIO_BLK=m
-+CONFIG_BLK_DEV_RSXX=m
 +CONFIG_BLK_DEV_NVME=y
 +CONFIG_NVME_MULTIPATH=y
 +CONFIG_AD525X_DPOT=m
@@ -3531,8 +4057,6 @@ index 000000000000..aad8de8351d8
 +CONFIG_SCSI_SPI_ATTRS=y
 +CONFIG_ISCSI_TCP=m
 +CONFIG_ISCSI_BOOT_SYSFS=m
-+CONFIG_SCSI_UFSHCD=m
-+CONFIG_SCSI_UFSHCD_PLATFORM=m
 +CONFIG_ATA=y
 +CONFIG_SATA_AHCI=y
 +CONFIG_MD=y
@@ -3601,7 +4125,6 @@ index 000000000000..aad8de8351d8
 +# CONFIG_NET_VENDOR_ARC is not set
 +# CONFIG_NET_VENDOR_ATHEROS is not set
 +# CONFIG_NET_VENDOR_BROADCOM is not set
-+# CONFIG_NET_VENDOR_BROCADE is not set
 +# CONFIG_NET_VENDOR_CADENCE is not set
 +# CONFIG_NET_VENDOR_CAVIUM is not set
 +# CONFIG_NET_VENDOR_CHELSIO is not set
@@ -3622,13 +4145,14 @@ index 000000000000..aad8de8351d8
 +# CONFIG_NET_VENDOR_MICROCHIP is not set
 +# CONFIG_NET_VENDOR_MICROSEMI is not set
 +# CONFIG_NET_VENDOR_MYRI is not set
++# CONFIG_NET_VENDOR_NI is not set
 +# CONFIG_NET_VENDOR_NATSEMI is not set
 +# CONFIG_NET_VENDOR_NETRONOME is not set
-+# CONFIG_NET_VENDOR_NI is not set
 +# CONFIG_NET_VENDOR_NVIDIA is not set
 +# CONFIG_NET_VENDOR_OKI is not set
 +# CONFIG_NET_VENDOR_PENSANDO is not set
 +# CONFIG_NET_VENDOR_QLOGIC is not set
++# CONFIG_NET_VENDOR_BROCADE is not set
 +# CONFIG_NET_VENDOR_QUALCOMM is not set
 +# CONFIG_NET_VENDOR_RDC is not set
 +CONFIG_R8169=m
@@ -3636,9 +4160,9 @@ index 000000000000..aad8de8351d8
 +# CONFIG_NET_VENDOR_ROCKER is not set
 +# CONFIG_NET_VENDOR_SAMSUNG is not set
 +# CONFIG_NET_VENDOR_SEEQ is not set
-+# CONFIG_NET_VENDOR_SOLARFLARE is not set
 +# CONFIG_NET_VENDOR_SILAN is not set
 +# CONFIG_NET_VENDOR_SIS is not set
++# CONFIG_NET_VENDOR_SOLARFLARE is not set
 +# CONFIG_NET_VENDOR_SMSC is not set
 +# CONFIG_NET_VENDOR_SOCIONEXT is not set
 +CONFIG_STMMAC_ETH=y
@@ -3651,6 +4175,16 @@ index 000000000000..aad8de8351d8
 +CONFIG_MOTORCOMM_PHY=y
 +CONFIG_REALTEK_PHY=y
 +CONFIG_ROCKCHIP_PHY=y
++CONFIG_CAN_VCAN=m
++CONFIG_CAN_SLCAN=m
++CONFIG_CAN_MCP251X=m
++CONFIG_CAN_8DEV_USB=m
++CONFIG_CAN_EMS_USB=m
++CONFIG_CAN_GS_USB=m
++CONFIG_CAN_KVASER_USB=m
++CONFIG_CAN_MCBA_USB=m
++CONFIG_CAN_PEAK_USB=m
++CONFIG_CAN_UCAN=m
 +CONFIG_PPP=y
 +CONFIG_PPP_BSDCOMP=m
 +CONFIG_PPP_DEFLATE=m
@@ -3733,14 +4267,15 @@ index 000000000000..aad8de8351d8
 +CONFIG_MWIFIEX_SDIO=m
 +CONFIG_MT7601U=m
 +CONFIG_MT76x0U=m
-+CONFIG_MT76x0E=m
 +CONFIG_MT76x2E=m
 +CONFIG_MT76x2U=m
-+CONFIG_MT7603E=m
 +CONFIG_MT7615E=m
 +CONFIG_MT7663U=m
 +CONFIG_MT7663S=m
 +CONFIG_MT7915E=m
++CONFIG_MT7921E=m
++CONFIG_MT7921S=m
++CONFIG_MT7921U=m
 +CONFIG_RT2X00=m
 +CONFIG_RT2500USB=m
 +CONFIG_RT73USB=m
@@ -3753,6 +4288,14 @@ index 000000000000..aad8de8351d8
 +CONFIG_RTL8192CU=m
 +CONFIG_RTL8XXXU=m
 +CONFIG_RTL8XXXU_UNTESTED=y
++CONFIG_RTW88=m
++CONFIG_RTW88_8822BE=m
++CONFIG_RTW88_8822CE=m
++CONFIG_RTW88_8723DE=m
++CONFIG_RTW88_8821CE=m
++CONFIG_RTW89=m
++CONFIG_RTW89_8852AE=m
++CONFIG_RTW89_8852CE=m
 +# CONFIG_WLAN_VENDOR_RSI is not set
 +# CONFIG_WLAN_VENDOR_ST is not set
 +# CONFIG_WLAN_VENDOR_TI is not set
@@ -3898,13 +4441,8 @@ index 000000000000..aad8de8351d8
 +CONFIG_RC_DECODERS=y
 +CONFIG_IR_NEC_DECODER=y
 +CONFIG_MEDIA_SUPPORT=y
-+CONFIG_VIDEO_V4L2_SUBDEV_API=y
 +CONFIG_MEDIA_USB_SUPPORT=y
-+CONFIG_USB_VIDEO_CLASS=m
 +CONFIG_USB_GSPCA=m
-+CONFIG_USB_M5602=m
-+CONFIG_USB_STV06XX=m
-+CONFIG_USB_GL860=m
 +CONFIG_USB_GSPCA_BENQ=m
 +CONFIG_USB_GSPCA_CONEX=m
 +CONFIG_USB_GSPCA_CPIA1=m
@@ -3929,13 +4467,13 @@ index 000000000000..aad8de8351d8
 +CONFIG_USB_GSPCA_SN9C20X=m
 +CONFIG_USB_GSPCA_SONIXB=m
 +CONFIG_USB_GSPCA_SONIXJ=m
++CONFIG_USB_GSPCA_SPCA1528=m
 +CONFIG_USB_GSPCA_SPCA500=m
 +CONFIG_USB_GSPCA_SPCA501=m
 +CONFIG_USB_GSPCA_SPCA505=m
 +CONFIG_USB_GSPCA_SPCA506=m
 +CONFIG_USB_GSPCA_SPCA508=m
 +CONFIG_USB_GSPCA_SPCA561=m
-+CONFIG_USB_GSPCA_SPCA1528=m
 +CONFIG_USB_GSPCA_SQ905=m
 +CONFIG_USB_GSPCA_SQ905C=m
 +CONFIG_USB_GSPCA_SQ930X=m
@@ -3950,12 +4488,13 @@ index 000000000000..aad8de8351d8
 +CONFIG_USB_GSPCA_VICAM=m
 +CONFIG_USB_GSPCA_XIRLINK_CIT=m
 +CONFIG_USB_GSPCA_ZC3XX=m
++CONFIG_USB_GL860=m
++CONFIG_USB_M5602=m
++CONFIG_USB_STV06XX=m
 +CONFIG_USB_PWC=m
-+CONFIG_VIDEO_CPIA2=m
-+CONFIG_USB_ZR364XX=m
-+CONFIG_USB_STKWEBCAM=m
 +CONFIG_USB_S2255=m
 +CONFIG_VIDEO_USBTV=m
++CONFIG_USB_VIDEO_CLASS=m
 +CONFIG_VIDEO_EM28XX=m
 +CONFIG_VIDEO_EM28XX_V4L2=m
 +CONFIG_VIDEO_EM28XX_ALSA=m
@@ -3963,7 +4502,6 @@ index 000000000000..aad8de8351d8
 +CONFIG_V4L_MEM2MEM_DRIVERS=y
 +CONFIG_VIDEO_ROCKCHIP_RGA=y
 +# CONFIG_VIDEO_IR_I2C is not set
-+# CONFIG_VGA_ARB is not set
 +CONFIG_DRM=y
 +CONFIG_DRM_LOAD_EDID_FIRMWARE=y
 +CONFIG_DRM_ROCKCHIP=y
@@ -4008,9 +4546,6 @@ index 000000000000..aad8de8351d8
 +CONFIG_SND_SOC=y
 +CONFIG_SND_SOC_ROCKCHIP=y
 +CONFIG_SND_SOC_ROCKCHIP_SPDIF=y
-+CONFIG_SND_SOC_ROCKCHIP_MAX98090=m
-+CONFIG_SND_SOC_ROCKCHIP_RT5645=y
-+CONFIG_SND_SOC_ES8316=m
 +CONFIG_SND_SOC_RK3328=m
 +CONFIG_SND_SOC_RT5616=m
 +CONFIG_SND_SOC_SPDIF=y
@@ -4210,6 +4745,8 @@ index 000000000000..aad8de8351d8
 +CONFIG_MMC_SDHCI_OF_ARASAN=y
 +CONFIG_MMC_DW=y
 +CONFIG_MMC_DW_ROCKCHIP=y
++CONFIG_SCSI_UFSHCD=m
++CONFIG_SCSI_UFSHCD_PLATFORM=m
 +CONFIG_LEDS_CLASS=y
 +CONFIG_LEDS_PCA9532=m
 +CONFIG_LEDS_GPIO=y
@@ -4304,7 +4841,6 @@ index 000000000000..aad8de8351d8
 +CONFIG_FB_TFT_TLS8204=m
 +CONFIG_FB_TFT_UC1701=m
 +CONFIG_FB_TFT_UPD161704=m
-+CONFIG_FB_TFT_WATTEROTT=m
 +CONFIG_COMMON_CLK_RK808=y
 +CONFIG_MAILBOX=y
 +CONFIG_ROCKCHIP_IOMMU=y
@@ -4328,6 +4864,7 @@ index 000000000000..aad8de8351d8
 +CONFIG_SENSORS_TSL2563=m
 +CONFIG_TSL2583=m
 +CONFIG_IIO_SYSFS_TRIGGER=y
++CONFIG_PWM=y
 +CONFIG_PWM_PCA9685=m
 +CONFIG_PWM_ROCKCHIP=y
 +CONFIG_PHY_ROCKCHIP_DP=y
@@ -4338,8 +4875,7 @@ index 000000000000..aad8de8351d8
 +CONFIG_PHY_ROCKCHIP_PCIE=y
 +CONFIG_PHY_ROCKCHIP_TYPEC=y
 +CONFIG_PHY_ROCKCHIP_USB=y
-+CONFIG_ANDROID=y
-+CONFIG_ROCKCHIP_EFUSE=y
++CONFIG_NVMEM_ROCKCHIP_EFUSE=y
 +CONFIG_TEE=m
 +CONFIG_OPTEE=m
 +CONFIG_EXT4_FS=y
@@ -4487,20 +5023,9 @@ index 000000000000..aad8de8351d8
 +CONFIG_DEFAULT_SECURITY_DAC=y
 +CONFIG_CRYPTO_USER=m
 +CONFIG_CRYPTO_PCRYPT=m
++CONFIG_CRYPTO_CRYPTD=y
 +CONFIG_CRYPTO_TEST=m
-+CONFIG_CRYPTO_CCM=y
-+CONFIG_CRYPTO_GCM=y
-+CONFIG_CRYPTO_CHACHA20POLY1305=m
-+CONFIG_CRYPTO_LRW=m
-+CONFIG_CRYPTO_KEYWRAP=m
-+CONFIG_CRYPTO_XCBC=m
-+CONFIG_CRYPTO_VMAC=m
-+CONFIG_CRYPTO_MD4=y
-+CONFIG_CRYPTO_MD5=y
-+CONFIG_CRYPTO_RMD160=m
-+CONFIG_CRYPTO_WP512=m
 +CONFIG_CRYPTO_ANUBIS=m
-+CONFIG_CRYPTO_ARC4=y
 +CONFIG_CRYPTO_BLOWFISH=m
 +CONFIG_CRYPTO_CAMELLIA=m
 +CONFIG_CRYPTO_CAST5=m
@@ -4511,7 +5036,19 @@ index 000000000000..aad8de8351d8
 +CONFIG_CRYPTO_SERPENT=m
 +CONFIG_CRYPTO_TEA=m
 +CONFIG_CRYPTO_TWOFISH=m
-+CONFIG_CRYPTO_LZO=y
++CONFIG_CRYPTO_ARC4=y
++CONFIG_CRYPTO_KEYWRAP=m
++CONFIG_CRYPTO_LRW=m
++CONFIG_CRYPTO_CHACHA20POLY1305=m
++CONFIG_CRYPTO_CCM=y
++CONFIG_CRYPTO_GCM=y
++CONFIG_CRYPTO_MD4=y
++CONFIG_CRYPTO_MD5=y
++CONFIG_CRYPTO_RMD160=m
++CONFIG_CRYPTO_VMAC=m
++CONFIG_CRYPTO_WP512=m
++CONFIG_CRYPTO_XCBC=m
++CONFIG_CRYPTO_CRC32=y
 +CONFIG_CRYPTO_LZ4=m
 +CONFIG_CRYPTO_LZ4HC=m
 +CONFIG_CRYPTO_ANSI_CPRNG=y
@@ -4521,6 +5058,16 @@ index 000000000000..aad8de8351d8
 +CONFIG_CRYPTO_USER_API_SKCIPHER=m
 +CONFIG_CRYPTO_USER_API_RNG=m
 +CONFIG_CRYPTO_USER_API_AEAD=m
++CONFIG_CRYPTO_CHACHA20_NEON=y
++CONFIG_CRYPTO_GHASH_ARM64_CE=y
++CONFIG_CRYPTO_SHA1_ARM64_CE=y
++CONFIG_CRYPTO_SHA2_ARM64_CE=y
++CONFIG_CRYPTO_SHA512_ARM64_CE=y
++CONFIG_CRYPTO_AES_ARM64=m
++CONFIG_CRYPTO_AES_ARM64_CE_BLK=y
++CONFIG_CRYPTO_AES_ARM64_BS=y
++CONFIG_CRYPTO_AES_ARM64_CE_CCM=y
++CONFIG_CRYPTO_CRCT10DIF_ARM64_CE=y
 +CONFIG_CRYPTO_DEV_ROCKCHIP=m
 +CONFIG_CRC_ITU_T=y
 +CONFIG_CRC7=y
@@ -4532,7 +5079,7 @@ index 000000000000..aad8de8351d8
 +CONFIG_DMA_CMA=y
 +CONFIG_PRINTK_TIME=y
 +CONFIG_DYNAMIC_DEBUG=y
-+CONFIG_DEBUG_INFO=y
++CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT=y
 +CONFIG_DEBUG_INFO_REDUCED=y
 +CONFIG_MAGIC_SYSRQ=y
 +CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE=0
@@ -4543,10 +5090,10 @@ index 000000000000..aad8de8351d8
 +CONFIG_BLK_DEV_IO_TRACE=y
 diff --git a/arch/arm64/configs/nanopi4_linux_defconfig b/arch/arm64/configs/nanopi4_linux_defconfig
 new file mode 100644
-index 000000000000..31641a67a98b
+index 000000000000..e4af37258562
 --- /dev/null
 +++ b/arch/arm64/configs/nanopi4_linux_defconfig
-@@ -0,0 +1,1663 @@
+@@ -0,0 +1,1668 @@
 +CONFIG_DEFAULT_HOSTNAME="localhost"
 +CONFIG_SYSVIPC=y
 +CONFIG_POSIX_MQUEUE=y
@@ -4555,7 +5102,7 @@ index 000000000000..31641a67a98b
 +CONFIG_HIGH_RES_TIMERS=y
 +CONFIG_BPF_SYSCALL=y
 +CONFIG_BPF_JIT=y
-+CONFIG_PREEMPT=y
++CONFIG_PREEMPT_VOLUNTARY=y
 +CONFIG_BSD_PROCESS_ACCT=y
 +CONFIG_BSD_PROCESS_ACCT_V3=y
 +CONFIG_TASKSTATS=y
@@ -4586,9 +5133,7 @@ index 000000000000..31641a67a98b
 +# CONFIG_RD_LZMA is not set
 +# CONFIG_RD_XZ is not set
 +# CONFIG_RD_LZO is not set
-+CONFIG_USERFAULTFD=y
 +CONFIG_EMBEDDED=y
-+# CONFIG_COMPAT_BRK is not set
 +CONFIG_PROFILING=y
 +CONFIG_ARCH_ROCKCHIP=y
 +# CONFIG_ARM64_ERRATUM_826319 is not set
@@ -4596,13 +5141,22 @@ index 000000000000..31641a67a98b
 +# CONFIG_ARM64_ERRATUM_824069 is not set
 +# CONFIG_ARM64_ERRATUM_819472 is not set
 +# CONFIG_ARM64_ERRATUM_832075 is not set
-+# CONFIG_ARM64_ERRATUM_1024718 is not set
 +# CONFIG_ARM64_ERRATUM_1418040 is not set
 +# CONFIG_ARM64_ERRATUM_1165522 is not set
 +# CONFIG_ARM64_ERRATUM_1286807 is not set
 +# CONFIG_ARM64_ERRATUM_1463225 is not set
++# CONFIG_ARM64_ERRATUM_1542419 is not set
++# CONFIG_ARM64_ERRATUM_1508412 is not set
++# CONFIG_ARM64_ERRATUM_2051678 is not set
++# CONFIG_ARM64_ERRATUM_2077057 is not set
++# CONFIG_ARM64_ERRATUM_2658417 is not set
++# CONFIG_ARM64_ERRATUM_2054223 is not set
++# CONFIG_ARM64_ERRATUM_2067961 is not set
++# CONFIG_ARM64_ERRATUM_2441009 is not set
++# CONFIG_ARM64_ERRATUM_2457168 is not set
 +# CONFIG_CAVIUM_ERRATUM_22375 is not set
 +# CONFIG_CAVIUM_ERRATUM_23154 is not set
++# CONFIG_CAVIUM_ERRATUM_27456 is not set
 +# CONFIG_CAVIUM_ERRATUM_30115 is not set
 +# CONFIG_CAVIUM_TX2_ERRATUM_219 is not set
 +# CONFIG_FUJITSU_ERRATUM_010001 is not set
@@ -4611,9 +5165,12 @@ index 000000000000..31641a67a98b
 +# CONFIG_QCOM_FALKOR_ERRATUM_1009 is not set
 +# CONFIG_QCOM_QDF2400_ERRATUM_0065 is not set
 +# CONFIG_QCOM_FALKOR_ERRATUM_E1041 is not set
++# CONFIG_NVIDIA_CARMEL_CNP_ERRATUM is not set
 +# CONFIG_SOCIONEXT_SYNQUACER_PREITS is not set
 +CONFIG_SCHED_MC=y
++CONFIG_SCHED_CLUSTER=y
 +CONFIG_NR_CPUS=8
++CONFIG_ARM64_SW_TTBR0_PAN=y
 +CONFIG_COMPAT=y
 +CONFIG_ARMV8_DEPRECATED=y
 +CONFIG_SWP_EMULATION=y
@@ -4624,7 +5181,6 @@ index 000000000000..31641a67a98b
 +CONFIG_WQ_POWER_EFFICIENT_DEFAULT=y
 +CONFIG_CPU_IDLE=y
 +CONFIG_CPU_IDLE_GOV_LADDER=y
-+CONFIG_ARM_CPUIDLE=y
 +CONFIG_ARM_PSCI_CPUIDLE=y
 +CONFIG_CPU_FREQ=y
 +CONFIG_CPU_FREQ_STAT=y
@@ -4634,15 +5190,6 @@ index 000000000000..31641a67a98b
 +CONFIG_CPU_FREQ_GOV_ONDEMAND=y
 +CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
 +CONFIG_CPUFREQ_DT=y
-+CONFIG_CRYPTO_SHA512_ARM64=y
-+CONFIG_CRYPTO_SHA1_ARM64_CE=y
-+CONFIG_CRYPTO_SHA2_ARM64_CE=y
-+CONFIG_CRYPTO_SHA512_ARM64_CE=m
-+CONFIG_CRYPTO_GHASH_ARM64_CE=y
-+CONFIG_CRYPTO_CRCT10DIF_ARM64_CE=m
-+CONFIG_CRYPTO_AES_ARM64_CE_CCM=y
-+CONFIG_CRYPTO_AES_ARM64_CE_BLK=y
-+CONFIG_CRYPTO_AES_ARM64_BS=m
 +CONFIG_JUMP_LABEL=y
 +CONFIG_MODULES=y
 +CONFIG_MODULE_UNLOAD=y
@@ -4654,18 +5201,18 @@ index 000000000000..31641a67a98b
 +CONFIG_IOSCHED_BFQ=m
 +CONFIG_BFQ_GROUP_IOSCHED=y
 +CONFIG_BINFMT_MISC=m
++CONFIG_ZSWAP=y
++# CONFIG_COMPAT_BRK is not set
 +CONFIG_TRANSPARENT_HUGEPAGE=y
 +CONFIG_TRANSPARENT_HUGEPAGE_MADVISE=y
-+CONFIG_CLEANCACHE=y
-+CONFIG_FRONTSWAP=y
 +CONFIG_CMA=y
-+CONFIG_ZSMALLOC=y
++CONFIG_USERFAULTFD=y
 +CONFIG_NET=y
 +CONFIG_PACKET=y
 +CONFIG_PACKET_DIAG=m
 +CONFIG_UNIX=y
 +CONFIG_UNIX_DIAG=m
-+CONFIG_XFRM_USER=y
++CONFIG_XFRM_USER=m
 +CONFIG_NET_KEY=m
 +CONFIG_INET=y
 +CONFIG_IP_MULTICAST=y
@@ -4682,6 +5229,7 @@ index 000000000000..31641a67a98b
 +CONFIG_NET_IPGRE=m
 +CONFIG_NET_IPGRE_BROADCAST=y
 +CONFIG_IP_MROUTE=y
++CONFIG_IP_MROUTE_MULTIPLE_TABLES=y
 +CONFIG_IP_PIMSM_V1=y
 +CONFIG_IP_PIMSM_V2=y
 +CONFIG_NET_IPVTI=m
@@ -4747,7 +5295,6 @@ index 000000000000..31641a67a98b
 +CONFIG_NFT_NUMGEN=m
 +CONFIG_NFT_CT=m
 +CONFIG_NFT_FLOW_OFFLOAD=m
-+CONFIG_NFT_COUNTER=m
 +CONFIG_NFT_CONNLIMIT=m
 +CONFIG_NFT_LOG=m
 +CONFIG_NFT_LIMIT=m
@@ -4785,6 +5332,7 @@ index 000000000000..31641a67a98b
 +CONFIG_NETFILTER_XT_TARGET_MARK=m
 +CONFIG_NETFILTER_XT_TARGET_NFLOG=m
 +CONFIG_NETFILTER_XT_TARGET_NFQUEUE=m
++CONFIG_NETFILTER_XT_TARGET_FLOWOFFLOAD=m
 +CONFIG_NETFILTER_XT_TARGET_TEE=m
 +CONFIG_NETFILTER_XT_TARGET_TPROXY=m
 +CONFIG_NETFILTER_XT_TARGET_TRACE=m
@@ -4874,7 +5422,6 @@ index 000000000000..31641a67a98b
 +CONFIG_NFT_DUP_IPV4=m
 +CONFIG_NFT_FIB_IPV4=m
 +CONFIG_NF_TABLES_ARP=y
-+CONFIG_NF_FLOW_TABLE_IPV4=m
 +CONFIG_NF_LOG_ARP=m
 +CONFIG_IP_NF_IPTABLES=m
 +CONFIG_IP_NF_MATCH_AH=m
@@ -4899,7 +5446,6 @@ index 000000000000..31641a67a98b
 +CONFIG_IP_NF_ARP_MANGLE=m
 +CONFIG_NFT_DUP_IPV6=m
 +CONFIG_NFT_FIB_IPV6=m
-+CONFIG_NF_FLOW_TABLE_IPV6=m
 +CONFIG_IP6_NF_IPTABLES=m
 +CONFIG_IP6_NF_MATCH_AH=m
 +CONFIG_IP6_NF_MATCH_EUI64=m
@@ -4921,7 +5467,6 @@ index 000000000000..31641a67a98b
 +CONFIG_IP6_NF_NAT=m
 +CONFIG_IP6_NF_TARGET_MASQUERADE=m
 +CONFIG_IP6_NF_TARGET_NPT=m
-+CONFIG_DECNET_NF_GRABULATOR=m
 +CONFIG_NF_TABLES_BRIDGE=m
 +CONFIG_NFT_BRIDGE_META=m
 +CONFIG_NFT_BRIDGE_REJECT=m
@@ -4972,7 +5517,6 @@ index 000000000000..31641a67a98b
 +CONFIG_VLAN_8021Q=m
 +CONFIG_VLAN_8021Q_GVRP=y
 +CONFIG_VLAN_8021Q_MVRP=y
-+CONFIG_DECNET=m
 +CONFIG_LLC2=m
 +CONFIG_ATALK=m
 +CONFIG_DEV_APPLETALK=m
@@ -5014,13 +5558,10 @@ index 000000000000..31641a67a98b
 +CONFIG_NET_SCH_INGRESS=m
 +CONFIG_NET_SCH_PLUG=m
 +CONFIG_NET_CLS_BASIC=m
-+CONFIG_NET_CLS_TCINDEX=m
 +CONFIG_NET_CLS_ROUTE4=m
 +CONFIG_NET_CLS_FW=m
 +CONFIG_NET_CLS_U32=m
 +CONFIG_CLS_U32_MARK=y
-+CONFIG_NET_CLS_RSVP=m
-+CONFIG_NET_CLS_RSVP6=m
 +CONFIG_NET_CLS_FLOW=m
 +CONFIG_NET_CLS_CGROUP=m
 +CONFIG_NET_CLS_BPF=m
@@ -5071,17 +5612,6 @@ index 000000000000..31641a67a98b
 +CONFIG_YAM=m
 +CONFIG_CAN=m
 +CONFIG_CAN_J1939=m
-+CONFIG_CAN_VCAN=m
-+CONFIG_CAN_SLCAN=m
-+CONFIG_CAN_MCP251X=m
-+CONFIG_CAN_8DEV_USB=m
-+CONFIG_CAN_EMS_USB=m
-+CONFIG_CAN_ESD_USB2=m
-+CONFIG_CAN_GS_USB=m
-+CONFIG_CAN_KVASER_USB=m
-+CONFIG_CAN_MCBA_USB=m
-+CONFIG_CAN_PEAK_USB=m
-+CONFIG_CAN_UCAN=m
 +CONFIG_BT=y
 +CONFIG_BT_RFCOMM=y
 +CONFIG_BT_RFCOMM_TTY=y
@@ -5153,6 +5683,7 @@ index 000000000000..31641a67a98b
 +CONFIG_PCI=y
 +CONFIG_PCIEPORTBUS=y
 +CONFIG_PCIEASPM_POWERSAVE=y
++# CONFIG_VGA_ARB is not set
 +CONFIG_PCIE_ROCKCHIP_HOST=y
 +CONFIG_UEVENT_HELPER=y
 +CONFIG_DEVTMPFS=y
@@ -5167,15 +5698,12 @@ index 000000000000..31641a67a98b
 +CONFIG_ZRAM_WRITEBACK=y
 +CONFIG_ZRAM_MEMORY_TRACKING=y
 +CONFIG_BLK_DEV_LOOP=y
-+CONFIG_BLK_DEV_CRYPTOLOOP=m
 +CONFIG_BLK_DEV_DRBD=m
 +CONFIG_BLK_DEV_NBD=m
-+CONFIG_BLK_DEV_SX8=m
 +CONFIG_BLK_DEV_RAM=y
 +CONFIG_BLK_DEV_RAM_COUNT=8
 +CONFIG_ATA_OVER_ETH=m
 +CONFIG_VIRTIO_BLK=m
-+CONFIG_BLK_DEV_RSXX=m
 +CONFIG_BLK_DEV_NVME=y
 +CONFIG_NVME_MULTIPATH=y
 +CONFIG_AD525X_DPOT=m
@@ -5198,8 +5726,6 @@ index 000000000000..31641a67a98b
 +CONFIG_SCSI_SPI_ATTRS=y
 +CONFIG_ISCSI_TCP=m
 +CONFIG_ISCSI_BOOT_SYSFS=m
-+CONFIG_SCSI_UFSHCD=m
-+CONFIG_SCSI_UFSHCD_PLATFORM=m
 +CONFIG_ATA=y
 +CONFIG_SATA_AHCI=y
 +CONFIG_MD=y
@@ -5268,7 +5794,6 @@ index 000000000000..31641a67a98b
 +# CONFIG_NET_VENDOR_ARC is not set
 +# CONFIG_NET_VENDOR_ATHEROS is not set
 +# CONFIG_NET_VENDOR_BROADCOM is not set
-+# CONFIG_NET_VENDOR_BROCADE is not set
 +# CONFIG_NET_VENDOR_CADENCE is not set
 +# CONFIG_NET_VENDOR_CAVIUM is not set
 +# CONFIG_NET_VENDOR_CHELSIO is not set
@@ -5289,13 +5814,14 @@ index 000000000000..31641a67a98b
 +# CONFIG_NET_VENDOR_MICROCHIP is not set
 +# CONFIG_NET_VENDOR_MICROSEMI is not set
 +# CONFIG_NET_VENDOR_MYRI is not set
++# CONFIG_NET_VENDOR_NI is not set
 +# CONFIG_NET_VENDOR_NATSEMI is not set
 +# CONFIG_NET_VENDOR_NETRONOME is not set
-+# CONFIG_NET_VENDOR_NI is not set
 +# CONFIG_NET_VENDOR_NVIDIA is not set
 +# CONFIG_NET_VENDOR_OKI is not set
 +# CONFIG_NET_VENDOR_PENSANDO is not set
 +# CONFIG_NET_VENDOR_QLOGIC is not set
++# CONFIG_NET_VENDOR_BROCADE is not set
 +# CONFIG_NET_VENDOR_QUALCOMM is not set
 +# CONFIG_NET_VENDOR_RDC is not set
 +CONFIG_R8169=m
@@ -5303,9 +5829,9 @@ index 000000000000..31641a67a98b
 +# CONFIG_NET_VENDOR_ROCKER is not set
 +# CONFIG_NET_VENDOR_SAMSUNG is not set
 +# CONFIG_NET_VENDOR_SEEQ is not set
-+# CONFIG_NET_VENDOR_SOLARFLARE is not set
 +# CONFIG_NET_VENDOR_SILAN is not set
 +# CONFIG_NET_VENDOR_SIS is not set
++# CONFIG_NET_VENDOR_SOLARFLARE is not set
 +# CONFIG_NET_VENDOR_SMSC is not set
 +# CONFIG_NET_VENDOR_SOCIONEXT is not set
 +CONFIG_STMMAC_ETH=y
@@ -5318,6 +5844,16 @@ index 000000000000..31641a67a98b
 +CONFIG_MOTORCOMM_PHY=y
 +CONFIG_REALTEK_PHY=y
 +CONFIG_ROCKCHIP_PHY=y
++CONFIG_CAN_VCAN=m
++CONFIG_CAN_SLCAN=m
++CONFIG_CAN_MCP251X=m
++CONFIG_CAN_8DEV_USB=m
++CONFIG_CAN_EMS_USB=m
++CONFIG_CAN_GS_USB=m
++CONFIG_CAN_KVASER_USB=m
++CONFIG_CAN_MCBA_USB=m
++CONFIG_CAN_PEAK_USB=m
++CONFIG_CAN_UCAN=m
 +CONFIG_PPP=y
 +CONFIG_PPP_BSDCOMP=m
 +CONFIG_PPP_DEFLATE=m
@@ -5402,14 +5938,15 @@ index 000000000000..31641a67a98b
 +CONFIG_MWIFIEX_SDIO=m
 +CONFIG_MT7601U=m
 +CONFIG_MT76x0U=m
-+CONFIG_MT76x0E=m
 +CONFIG_MT76x2E=m
 +CONFIG_MT76x2U=m
-+CONFIG_MT7603E=m
 +CONFIG_MT7615E=m
 +CONFIG_MT7663U=m
 +CONFIG_MT7663S=m
 +CONFIG_MT7915E=m
++CONFIG_MT7921E=m
++CONFIG_MT7921S=m
++CONFIG_MT7921U=m
 +CONFIG_RT2X00=m
 +CONFIG_RT2500USB=m
 +CONFIG_RT73USB=m
@@ -5422,6 +5959,14 @@ index 000000000000..31641a67a98b
 +CONFIG_RTL8192CU=m
 +CONFIG_RTL8XXXU=m
 +CONFIG_RTL8XXXU_UNTESTED=y
++CONFIG_RTW88=m
++CONFIG_RTW88_8822BE=m
++CONFIG_RTW88_8822CE=m
++CONFIG_RTW88_8723DE=m
++CONFIG_RTW88_8821CE=m
++CONFIG_RTW89=m
++CONFIG_RTW89_8852AE=m
++CONFIG_RTW89_8852CE=m
 +# CONFIG_WLAN_VENDOR_RSI is not set
 +# CONFIG_WLAN_VENDOR_ST is not set
 +# CONFIG_WLAN_VENDOR_TI is not set
@@ -5567,13 +6112,8 @@ index 000000000000..31641a67a98b
 +CONFIG_RC_DECODERS=y
 +CONFIG_IR_NEC_DECODER=y
 +CONFIG_MEDIA_SUPPORT=y
-+CONFIG_VIDEO_V4L2_SUBDEV_API=y
 +CONFIG_MEDIA_USB_SUPPORT=y
-+CONFIG_USB_VIDEO_CLASS=m
 +CONFIG_USB_GSPCA=m
-+CONFIG_USB_M5602=m
-+CONFIG_USB_STV06XX=m
-+CONFIG_USB_GL860=m
 +CONFIG_USB_GSPCA_BENQ=m
 +CONFIG_USB_GSPCA_CONEX=m
 +CONFIG_USB_GSPCA_CPIA1=m
@@ -5598,13 +6138,13 @@ index 000000000000..31641a67a98b
 +CONFIG_USB_GSPCA_SN9C20X=m
 +CONFIG_USB_GSPCA_SONIXB=m
 +CONFIG_USB_GSPCA_SONIXJ=m
++CONFIG_USB_GSPCA_SPCA1528=m
 +CONFIG_USB_GSPCA_SPCA500=m
 +CONFIG_USB_GSPCA_SPCA501=m
 +CONFIG_USB_GSPCA_SPCA505=m
 +CONFIG_USB_GSPCA_SPCA506=m
 +CONFIG_USB_GSPCA_SPCA508=m
 +CONFIG_USB_GSPCA_SPCA561=m
-+CONFIG_USB_GSPCA_SPCA1528=m
 +CONFIG_USB_GSPCA_SQ905=m
 +CONFIG_USB_GSPCA_SQ905C=m
 +CONFIG_USB_GSPCA_SQ930X=m
@@ -5619,12 +6159,13 @@ index 000000000000..31641a67a98b
 +CONFIG_USB_GSPCA_VICAM=m
 +CONFIG_USB_GSPCA_XIRLINK_CIT=m
 +CONFIG_USB_GSPCA_ZC3XX=m
++CONFIG_USB_GL860=m
++CONFIG_USB_M5602=m
++CONFIG_USB_STV06XX=m
 +CONFIG_USB_PWC=m
-+CONFIG_VIDEO_CPIA2=m
-+CONFIG_USB_ZR364XX=m
-+CONFIG_USB_STKWEBCAM=m
 +CONFIG_USB_S2255=m
 +CONFIG_VIDEO_USBTV=m
++CONFIG_USB_VIDEO_CLASS=m
 +CONFIG_VIDEO_EM28XX=m
 +CONFIG_VIDEO_EM28XX_V4L2=m
 +CONFIG_VIDEO_EM28XX_ALSA=m
@@ -5632,7 +6173,6 @@ index 000000000000..31641a67a98b
 +CONFIG_V4L_MEM2MEM_DRIVERS=y
 +CONFIG_VIDEO_ROCKCHIP_RGA=y
 +# CONFIG_VIDEO_IR_I2C is not set
-+# CONFIG_VGA_ARB is not set
 +CONFIG_DRM=y
 +CONFIG_DRM_LOAD_EDID_FIRMWARE=y
 +CONFIG_DRM_ROCKCHIP=y
@@ -5645,6 +6185,7 @@ index 000000000000..31641a67a98b
 +CONFIG_DRM_UDL=m
 +CONFIG_DRM_PANEL_SIMPLE=y
 +CONFIG_DRM_DW_HDMI_I2S_AUDIO=y
++CONFIG_DRM_PANFROST=m
 +CONFIG_FB=y
 +CONFIG_FB_UDL=m
 +CONFIG_FB_SSD1307=m
@@ -5676,12 +6217,11 @@ index 000000000000..31641a67a98b
 +CONFIG_SND_USB_HIFACE=m
 +CONFIG_SND_SOC=y
 +CONFIG_SND_SOC_ROCKCHIP=y
++CONFIG_SND_SOC_ROCKCHIP_I2S=y
 +CONFIG_SND_SOC_ROCKCHIP_SPDIF=y
-+CONFIG_SND_SOC_ROCKCHIP_MAX98090=m
-+CONFIG_SND_SOC_ROCKCHIP_RT5645=y
-+CONFIG_SND_SOC_ES8316=m
 +CONFIG_SND_SOC_RK3328=m
 +CONFIG_SND_SOC_RT5616=m
++CONFIG_SND_SOC_RT5651=y
 +CONFIG_SND_SOC_SPDIF=y
 +CONFIG_SND_SIMPLE_CARD=y
 +CONFIG_HID_BATTERY_STRENGTH=y
@@ -5879,6 +6419,8 @@ index 000000000000..31641a67a98b
 +CONFIG_MMC_SDHCI_OF_ARASAN=y
 +CONFIG_MMC_DW=y
 +CONFIG_MMC_DW_ROCKCHIP=y
++CONFIG_SCSI_UFSHCD=m
++CONFIG_SCSI_UFSHCD_PLATFORM=m
 +CONFIG_LEDS_CLASS=y
 +CONFIG_LEDS_PCA9532=m
 +CONFIG_LEDS_GPIO=y
@@ -5973,7 +6515,6 @@ index 000000000000..31641a67a98b
 +CONFIG_FB_TFT_TLS8204=m
 +CONFIG_FB_TFT_UC1701=m
 +CONFIG_FB_TFT_UPD161704=m
-+CONFIG_FB_TFT_WATTEROTT=m
 +CONFIG_COMMON_CLK_RK808=y
 +CONFIG_MAILBOX=y
 +CONFIG_ROCKCHIP_IOMMU=y
@@ -5997,6 +6538,7 @@ index 000000000000..31641a67a98b
 +CONFIG_SENSORS_TSL2563=m
 +CONFIG_TSL2583=m
 +CONFIG_IIO_SYSFS_TRIGGER=y
++CONFIG_PWM=y
 +CONFIG_PWM_PCA9685=m
 +CONFIG_PWM_ROCKCHIP=y
 +CONFIG_PHY_ROCKCHIP_DP=y
@@ -6007,8 +6549,7 @@ index 000000000000..31641a67a98b
 +CONFIG_PHY_ROCKCHIP_PCIE=y
 +CONFIG_PHY_ROCKCHIP_TYPEC=y
 +CONFIG_PHY_ROCKCHIP_USB=y
-+CONFIG_ANDROID=y
-+CONFIG_ROCKCHIP_EFUSE=y
++CONFIG_NVMEM_ROCKCHIP_EFUSE=y
 +CONFIG_TEE=m
 +CONFIG_OPTEE=m
 +CONFIG_EXT4_FS=y
@@ -6156,20 +6697,9 @@ index 000000000000..31641a67a98b
 +CONFIG_DEFAULT_SECURITY_DAC=y
 +CONFIG_CRYPTO_USER=m
 +CONFIG_CRYPTO_PCRYPT=m
++CONFIG_CRYPTO_CRYPTD=y
 +CONFIG_CRYPTO_TEST=m
-+CONFIG_CRYPTO_CCM=y
-+CONFIG_CRYPTO_GCM=y
-+CONFIG_CRYPTO_CHACHA20POLY1305=m
-+CONFIG_CRYPTO_LRW=m
-+CONFIG_CRYPTO_KEYWRAP=m
-+CONFIG_CRYPTO_XCBC=m
-+CONFIG_CRYPTO_VMAC=m
-+CONFIG_CRYPTO_MD4=y
-+CONFIG_CRYPTO_MD5=y
-+CONFIG_CRYPTO_RMD160=m
-+CONFIG_CRYPTO_WP512=m
 +CONFIG_CRYPTO_ANUBIS=m
-+CONFIG_CRYPTO_ARC4=y
 +CONFIG_CRYPTO_BLOWFISH=m
 +CONFIG_CRYPTO_CAMELLIA=m
 +CONFIG_CRYPTO_CAST5=m
@@ -6180,7 +6710,19 @@ index 000000000000..31641a67a98b
 +CONFIG_CRYPTO_SERPENT=m
 +CONFIG_CRYPTO_TEA=m
 +CONFIG_CRYPTO_TWOFISH=m
-+CONFIG_CRYPTO_LZO=y
++CONFIG_CRYPTO_ARC4=y
++CONFIG_CRYPTO_KEYWRAP=m
++CONFIG_CRYPTO_LRW=m
++CONFIG_CRYPTO_CHACHA20POLY1305=m
++CONFIG_CRYPTO_CCM=y
++CONFIG_CRYPTO_GCM=y
++CONFIG_CRYPTO_MD4=y
++CONFIG_CRYPTO_MD5=y
++CONFIG_CRYPTO_RMD160=m
++CONFIG_CRYPTO_VMAC=m
++CONFIG_CRYPTO_WP512=m
++CONFIG_CRYPTO_XCBC=m
++CONFIG_CRYPTO_CRC32=y
 +CONFIG_CRYPTO_LZ4=m
 +CONFIG_CRYPTO_LZ4HC=m
 +CONFIG_CRYPTO_ANSI_CPRNG=y
@@ -6190,6 +6732,16 @@ index 000000000000..31641a67a98b
 +CONFIG_CRYPTO_USER_API_SKCIPHER=m
 +CONFIG_CRYPTO_USER_API_RNG=m
 +CONFIG_CRYPTO_USER_API_AEAD=m
++CONFIG_CRYPTO_CHACHA20_NEON=y
++CONFIG_CRYPTO_GHASH_ARM64_CE=y
++CONFIG_CRYPTO_SHA1_ARM64_CE=y
++CONFIG_CRYPTO_SHA2_ARM64_CE=y
++CONFIG_CRYPTO_SHA512_ARM64_CE=y
++CONFIG_CRYPTO_AES_ARM64=m
++CONFIG_CRYPTO_AES_ARM64_CE_BLK=y
++CONFIG_CRYPTO_AES_ARM64_BS=y
++CONFIG_CRYPTO_AES_ARM64_CE_CCM=y
++CONFIG_CRYPTO_CRCT10DIF_ARM64_CE=y
 +CONFIG_CRYPTO_DEV_ROCKCHIP=m
 +CONFIG_CRC_ITU_T=y
 +CONFIG_CRC7=y
@@ -6201,7 +6753,7 @@ index 000000000000..31641a67a98b
 +CONFIG_DMA_CMA=y
 +CONFIG_PRINTK_TIME=y
 +CONFIG_DYNAMIC_DEBUG=y
-+CONFIG_DEBUG_INFO=y
++CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT=y
 +CONFIG_DEBUG_INFO_REDUCED=y
 +CONFIG_MAGIC_SYSRQ=y
 +CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE=0
@@ -6211,10 +6763,10 @@ index 000000000000..31641a67a98b
 +CONFIG_FUNCTION_TRACER=y
 +CONFIG_BLK_DEV_IO_TRACE=y
 diff --git a/block/partitions/Kconfig b/block/partitions/Kconfig
-index 278593b8e4e9..8d211ae5f8f5 100644
+index 7aff4eb81c60..af6918712077 100644
 --- a/block/partitions/Kconfig
 +++ b/block/partitions/Kconfig
-@@ -262,6 +262,16 @@ config SYSV68_PARTITION
+@@ -264,6 +264,16 @@ config SYSV68_PARTITION
  	  sysv68).
  	  Otherwise, say N.
  
@@ -6241,19 +6793,19 @@ index a7f05cdb02a8..e11f2800e684 100644
  obj-$(CONFIG_SYSV68_PARTITION) += sysv68.o
 +obj-$(CONFIG_RK_PARTITION) += rk.o
 diff --git a/block/partitions/check.h b/block/partitions/check.h
-index d5b28e309d64..f067ada0b6d8 100644
+index 8d70a880c372..0e8aa0b2eefa 100644
 --- a/block/partitions/check.h
 +++ b/block/partitions/check.h
-@@ -68,3 +68,4 @@ int sgi_partition(struct parsed_partitions *state);
+@@ -67,3 +67,4 @@ int sgi_partition(struct parsed_partitions *state);
  int sun_partition(struct parsed_partitions *state);
  int sysv68_partition(struct parsed_partitions *state);
  int ultrix_partition(struct parsed_partitions *state);
 +int rkpart_partition(struct parsed_partitions *state);
 diff --git a/block/partitions/core.c b/block/partitions/core.c
-index b9e9af84f518..6b63346eb665 100644
+index b8112f52d388..2a8cd8f4a37e 100644
 --- a/block/partitions/core.c
 +++ b/block/partitions/core.c
-@@ -83,6 +83,9 @@ static int (*check_part[])(struct parsed_partitions *) = {
+@@ -81,6 +81,9 @@ static int (*check_part[])(struct parsed_partitions *) = {
  #endif
  #ifdef CONFIG_SYSV68_PARTITION
  	sysv68_partition,
@@ -6648,12 +7200,12 @@ index 000000000000..a2541dd261c7
 +
 +#endif
 diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index 650c7d918080..6108469c7a39 100644
+index 3da8e85f8aae..a919921afb3f 100644
 --- a/drivers/char/hw_random/Kconfig
 +++ b/drivers/char/hw_random/Kconfig
-@@ -538,6 +538,18 @@ config HW_RANDOM_ARM_SMCCC_TRNG
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called arm_smccc_trng.
+@@ -549,6 +549,18 @@ config HW_RANDOM_CN10K
+ 	 To compile this driver as a module, choose M here.
+ 	 The module will be called cn10k_rng. If unsure, say Y.
  
 +config HW_RANDOM_ROCKCHIP
 +	tristate "Rockchip Random Number Generator support"
@@ -6671,13 +7223,13 @@ index 650c7d918080..6108469c7a39 100644
  
  config UML_RANDOM
 diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
-index a5a1c765a394..a1d28a8a529a 100644
+index 3e948cf04476..b7e989535fd6 100644
 --- a/drivers/char/hw_random/Makefile
 +++ b/drivers/char/hw_random/Makefile
-@@ -46,3 +46,4 @@ obj-$(CONFIG_HW_RANDOM_NPCM) += npcm-rng.o
- obj-$(CONFIG_HW_RANDOM_CCTRNG) += cctrng.o
- obj-$(CONFIG_HW_RANDOM_XIPHERA) += xiphera-trng.o
+@@ -47,3 +47,4 @@ obj-$(CONFIG_HW_RANDOM_XIPHERA) += xiphera-trng.o
  obj-$(CONFIG_HW_RANDOM_ARM_SMCCC_TRNG) += arm_smccc_trng.o
+ obj-$(CONFIG_HW_RANDOM_CN10K) += cn10k-rng.o
+ obj-$(CONFIG_HW_RANDOM_POLARFIRE_SOC) += mpfs-rng.o
 +obj-$(CONFIG_HW_RANDOM_ROCKCHIP) += rockchip-rng.o
 diff --git a/drivers/char/hw_random/rockchip-rng.c b/drivers/char/hw_random/rockchip-rng.c
 new file mode 100644
@@ -7191,10 +7743,10 @@ index 267ab54937d3..92bfea087cf6 100644
  			RK3328_CLKGATE_CON(18), 6, GFLAGS),
  	GATE(0, "clk_ddrupctl", "clk_ddr", CLK_IGNORE_UNUSED,
 diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 7aa45cc70287..3c909e02a30c 100644
+index ee01739e4a7c..c4c392c18873 100644
 --- a/drivers/clk/rockchip/clk.h
 +++ b/drivers/clk/rockchip/clk.h
-@@ -399,7 +399,8 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+@@ -418,7 +418,8 @@ struct clk *rockchip_clk_register_mmc(const char *name,
   * DDRCLK flags, including method of setting the rate
   * ROCKCHIP_DDRCLK_SIP: use SIP call to bl31 to change ddrclk rate.
   */
@@ -7205,12 +7757,12 @@ index 7aa45cc70287..3c909e02a30c 100644
  struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
  					 const char *const *parent_names,
 diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-index e87d01c0b76a..62837a95f0c7 100644
+index 9754d8b31621..c3380b360c68 100644
 --- a/drivers/devfreq/Kconfig
 +++ b/drivers/devfreq/Kconfig
-@@ -120,6 +120,18 @@ config ARM_TEGRA_DEVFREQ
- 	  It reads ACTMON counters of memory controllers and adjusts the
- 	  operating frequencies and voltages with OPP support.
+@@ -130,6 +130,18 @@ config ARM_MEDIATEK_CCI_DEVFREQ
+ 	  buck voltages and update a proper CCI frequency. Use the notification
+ 	  to get the regulator status.
  
 +config ARM_RK3328_DMC_DEVFREQ
 +	tristate "ARM RK3328 DMC DEVFREQ Driver"
@@ -7228,19 +7780,19 @@ index e87d01c0b76a..62837a95f0c7 100644
  	tristate "ARM RK3399 DMC DEVFREQ Driver"
  	depends on (ARCH_ROCKCHIP && HAVE_ARM_SMCCC) || \
 diff --git a/drivers/devfreq/Makefile b/drivers/devfreq/Makefile
-index a16333ea7034..8084117f9a94 100644
+index bf40d04928d0..08c0738ae439 100644
 --- a/drivers/devfreq/Makefile
 +++ b/drivers/devfreq/Makefile
-@@ -12,6 +12,7 @@ obj-$(CONFIG_ARM_EXYNOS_BUS_DEVFREQ)	+= exynos-bus.o
- obj-$(CONFIG_ARM_IMX_BUS_DEVFREQ)	+= imx-bus.o
+@@ -13,6 +13,7 @@ obj-$(CONFIG_ARM_IMX_BUS_DEVFREQ)	+= imx-bus.o
  obj-$(CONFIG_ARM_IMX8M_DDRC_DEVFREQ)	+= imx8m-ddrc.o
+ obj-$(CONFIG_ARM_MEDIATEK_CCI_DEVFREQ)	+= mtk-cci-devfreq.o
  obj-$(CONFIG_ARM_RK3399_DMC_DEVFREQ)	+= rk3399_dmc.o
 +obj-$(CONFIG_ARM_RK3328_DMC_DEVFREQ)	+= rk3328_dmc.o
+ obj-$(CONFIG_ARM_SUN8I_A33_MBUS_DEVFREQ)	+= sun8i-a33-mbus.o
  obj-$(CONFIG_ARM_TEGRA_DEVFREQ)		+= tegra30-devfreq.o
  
- # DEVFREQ Event Drivers
 diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event/rockchip-dfi.c
-index 9a88faaf8b27..ceabb3a4223e 100644
+index 39ac069cabc7..79406165a0c7 100644
 --- a/drivers/devfreq/event/rockchip-dfi.c
 +++ b/drivers/devfreq/event/rockchip-dfi.c
 @@ -18,25 +18,66 @@
@@ -7822,7 +8374,7 @@ index 9a88faaf8b27..ceabb3a4223e 100644
  
  	data->regs = devm_platform_ioremap_resource(pdev, 0);
  	if (IS_ERR(data->regs))
-@@ -202,21 +613,67 @@ static int rockchip_dfi_probe(struct platform_device *pdev)
+@@ -201,21 +612,67 @@ static int rockchip_dfi_probe(struct platform_device *pdev)
  		if (IS_ERR(data->regmap_pmu))
  			return PTR_ERR(data->regmap_pmu);
  	}
@@ -8747,14 +9299,198 @@ index 000000000000..5dcea91cfae9
 +MODULE_LICENSE("GPL v2");
 +MODULE_AUTHOR("Lin Huang <hl@rock-chips.com>");
 +MODULE_DESCRIPTION("RK3328 dmcfreq driver with devfreq framework");
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index aa51c61a78c7..4b45e6c37f74 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -99,6 +99,44 @@ static const u16 csc_coeff_rgb_full_to_rgb_limited[3][4] = {
+ 	{ 0x0000, 0x0000, 0x1b7c, 0x0020 }
+ };
+ 
++static const struct drm_display_mode dw_hdmi_default_modes[] = {
++	/* 4 - 1280x720@60Hz 16:9 */
++	{ DRM_MODE("1280x720", DRM_MODE_TYPE_DRIVER, 74250, 1280, 1390,
++		   1430, 1650, 0, 720, 725, 730, 750, 0,
++		   DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC),
++	  .picture_aspect_ratio = HDMI_PICTURE_ASPECT_16_9, },
++	/* 16 - 1920x1080@60Hz 16:9 */
++	{ DRM_MODE("1920x1080", DRM_MODE_TYPE_DRIVER, 148500, 1920, 2008,
++		   2052, 2200, 0, 1080, 1084, 1089, 1125, 0,
++		   DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC),
++	  .picture_aspect_ratio = HDMI_PICTURE_ASPECT_16_9, },
++	/* 31 - 1920x1080@50Hz 16:9 */
++	{ DRM_MODE("1920x1080", DRM_MODE_TYPE_DRIVER, 148500, 1920, 2448,
++		   2492, 2640, 0, 1080, 1084, 1089, 1125, 0,
++		   DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC),
++	  .picture_aspect_ratio = HDMI_PICTURE_ASPECT_16_9, },
++	/* 19 - 1280x720@50Hz 16:9 */
++	{ DRM_MODE("1280x720", DRM_MODE_TYPE_DRIVER, 74250, 1280, 1720,
++		   1760, 1980, 0, 720, 725, 730, 750, 0,
++		   DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC),
++	  .picture_aspect_ratio = HDMI_PICTURE_ASPECT_16_9, },
++	/* 0x10 - 1024x768@60Hz */
++	{ DRM_MODE("1024x768", DRM_MODE_TYPE_DRIVER, 65000, 1024, 1048,
++		   1184, 1344, 0,  768, 771, 777, 806, 0,
++		   DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC),
++	  .picture_aspect_ratio = HDMI_PICTURE_ASPECT_4_3, },
++	/* 17 - 720x576@50Hz 4:3 */
++	{ DRM_MODE("720x576", DRM_MODE_TYPE_DRIVER, 27000, 720, 732,
++		   796, 864, 0, 576, 581, 586, 625, 0,
++		   DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC),
++	  .picture_aspect_ratio = HDMI_PICTURE_ASPECT_4_3, },
++	/* 2 - 720x480@60Hz 4:3 */
++	{ DRM_MODE("720x480", DRM_MODE_TYPE_DRIVER, 27000, 720, 736,
++		   798, 858, 0, 480, 489, 495, 525, 0,
++		   DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC),
++	  .picture_aspect_ratio = HDMI_PICTURE_ASPECT_4_3, },
++};
++
+ struct hdmi_vmode {
+ 	bool mdataenablepolarity;
+ 
+@@ -171,11 +209,13 @@ struct dw_hdmi {
+ 	} phy;
+ 
+ 	struct drm_display_mode previous_mode;
++	int preferred_mode;
+ 
+ 	struct i2c_adapter *ddc;
+ 	void __iomem *regs;
+ 	bool sink_is_hdmi;
+ 	bool sink_has_audio;
++	bool ignore_edid;
+ 
+ 	struct pinctrl *pinctrl;
+ 	struct pinctrl_state *default_state;
+@@ -2515,12 +2555,31 @@ static int dw_hdmi_connector_get_modes(struct drm_connector *connector)
+ {
+ 	struct dw_hdmi *hdmi = container_of(connector, struct dw_hdmi,
+ 					     connector);
++	struct drm_display_mode *mode;
++	const struct drm_display_mode *t;
+ 	struct edid *edid;
+-	int ret;
++	int i, ret = 0;
+ 
+-	edid = dw_hdmi_get_edid(hdmi, connector);
+-	if (!edid)
+-		return 0;
++	edid = hdmi->ignore_edid ? NULL :
++		dw_hdmi_get_edid(hdmi, connector);
++	if (!edid) {
++		hdmi->sink_is_hdmi = true;
++		hdmi->sink_has_audio = true;
++
++		t = dw_hdmi_default_modes;
++		for (i = 0; i < ARRAY_SIZE(dw_hdmi_default_modes); i++, t++) {
++			mode = drm_mode_duplicate(connector->dev, t);
++			if (mode) {
++				if (i == hdmi->preferred_mode) {
++					mode->type |= DRM_MODE_TYPE_PREFERRED;
++					mode->picture_aspect_ratio = HDMI_PICTURE_ASPECT_NONE;
++				}
++				drm_mode_probed_add(connector, mode);
++				ret++;
++			}
++		}
++		return ret;
++	}
+ 
+ 	drm_connector_update_edid_property(connector, edid);
+ 	cec_notifier_set_phys_addr_from_edid(hdmi->cec_notifier, edid);
+@@ -3480,6 +3539,15 @@ struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
+ 		}
+ 	}
+ 
++	if (of_property_read_bool(np, "rockchip,broken-edid"))
++		hdmi->ignore_edid = true;
++
++	if (!of_property_read_u32(np, "rockchip,defaultmode", &val) &&
++		val < ARRAY_SIZE(dw_hdmi_default_modes))
++		hdmi->preferred_mode = val;
++	else
++		hdmi->preferred_mode = 0;
++
+ 	/* Product and revision IDs */
+ 	hdmi->version = (hdmi_readb(hdmi, HDMI_DESIGN_ID) << 8)
+ 		      | (hdmi_readb(hdmi, HDMI_REVISION_ID) << 0);
+diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+index 5ed77e3361fd..31f05a11f266 100644
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -89,6 +89,8 @@ static int oui(u8 first, u8 second, u8 third)
+ #define EDID_QUIRK_NON_DESKTOP			(1 << 12)
+ /* Cap the DSC target bitrate to 15bpp */
+ #define EDID_QUIRK_CAP_DSC_15BPP		(1 << 13)
++/* Prefer hight clock mode */
++#define EDID_QUIRK_PREFER_HIGH_CLOCK		(1 << 14)
+ 
+ #define MICROSOFT_IEEE_OUI	0xca125c
+ 
+@@ -168,6 +170,9 @@ static const struct edid_quirk {
+ 	EDID_QUIRK('S', 'A', 'M', 596, EDID_QUIRK_PREFER_LARGE_60),
+ 	EDID_QUIRK('S', 'A', 'M', 638, EDID_QUIRK_PREFER_LARGE_60),
+ 
++	/* Skyworth */
++	EDID_QUIRK( 'S', 'K', 'W', 1, EDID_QUIRK_PREFER_LARGE_60 | EDID_QUIRK_PREFER_HIGH_CLOCK),
++
+ 	/* Sony PVM-2541A does up to 12 bpc, but only reports max 8 bpc */
+ 	EDID_QUIRK('S', 'N', 'Y', 0x2541, EDID_QUIRK_FORCE_12BPC),
+ 
+@@ -2853,6 +2858,14 @@ static void edid_fixup_preferred(struct drm_connector *connector,
+ 		    MODE_REFRESH_DIFF(preferred_vrefresh, target_refresh)) {
+ 			preferred_mode = cur_mode;
+ 		}
++
++		/* Consider the clock like drm_mode_compare() */
++		if ((quirks & EDID_QUIRK_PREFER_HIGH_CLOCK) &&
++		    (MODE_SIZE(cur_mode) == MODE_SIZE(preferred_mode)) &&
++		    (cur_vrefresh == preferred_vrefresh) &&
++		    (cur_mode->clock > preferred_mode->clock)) {
++			preferred_mode = cur_mode;
++		}
+ 	}
+ 
+ 	preferred_mode->type |= DRM_MODE_TYPE_PREFERRED;
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+index 092bf863110b..4283791fcb38 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+@@ -19,6 +19,10 @@
+ #include "rockchip_drm_fb.h"
+ #include "rockchip_drm_gem.h"
+ 
++static int fb_max_sz = -1;
++module_param(fb_max_sz, int, 0444);
++MODULE_PARM_DESC(fb_max_sz, "Override the maximum framebuffer size");
++
+ static const struct drm_framebuffer_funcs rockchip_drm_fb_funcs = {
+ 	.destroy       = drm_gem_fb_destroy,
+ 	.create_handle = drm_gem_fb_create_handle,
+@@ -130,8 +134,13 @@ void rockchip_drm_mode_config_init(struct drm_device *dev)
+ 	 * this value would be used to check framebuffer size limitation
+ 	 * at drm_mode_addfb().
+ 	 */
+-	dev->mode_config.max_width = 4096;
+-	dev->mode_config.max_height = 4096;
++	dev->mode_config.max_width = fb_max_sz;
++	dev->mode_config.max_height = fb_max_sz;
++	if (fb_max_sz > 800 && fb_max_sz < 4096) {
++		dev->mode_config.max_width = fb_max_sz;
++		dev->mode_config.max_height = fb_max_sz;
++		drm_info(dev, "fbdev: max size %d\n", fb_max_sz);
++	}
+ 
+ 	dev->mode_config.funcs = &rockchip_drm_mode_config_funcs;
+ 	dev->mode_config.helper_private = &rockchip_mode_config_helpers;
 diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-index 3222a9d0c245..729ebe3bde81 100644
+index cdd7f126d4ae..dd8541c62ab7 100644
 --- a/drivers/mmc/core/block.c
 +++ b/drivers/mmc/core/block.c
-@@ -2432,6 +2432,10 @@ static struct mmc_blk_data *mmc_blk_alloc_req(struct mmc_card *card,
+@@ -2472,6 +2472,10 @@ static struct mmc_blk_data *mmc_blk_alloc_req(struct mmc_card *card,
+ 	set_disk_ro(md->disk, md->read_only || default_ro);
  	if (area_type & (MMC_BLK_DATA_AREA_RPMB | MMC_BLK_DATA_AREA_BOOT))
- 		md->disk->flags |= GENHD_FL_NO_PART_SCAN
- 				   | GENHD_FL_SUPPRESS_PARTITION_INFO;
+ 		md->disk->flags |= GENHD_FL_NO_PART;
 +#if defined(CONFIG_RK_PARTITION)
 +	else if (card->host->caps2 & MMC_CAP2_NO_SD)
 +		md->disk->flags |= GENHD_FL_RKPART;
@@ -8763,7 +9499,7 @@ index 3222a9d0c245..729ebe3bde81 100644
  	/*
  	 * As discussed on lkml, GENHD_FL_REMOVABLE should:
 diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
-index d36991acd6df..4b1754ba6a50 100644
+index 2a99f15f527f..763978194870 100644
 --- a/drivers/mmc/host/dw_mmc-rockchip.c
 +++ b/drivers/mmc/host/dw_mmc-rockchip.c
 @@ -11,6 +11,7 @@
@@ -8774,7 +9510,7 @@ index d36991acd6df..4b1754ba6a50 100644
  
  #include "dw_mmc.h"
  #include "dw_mmc-pltfm.h"
-@@ -22,6 +23,7 @@ struct dw_mci_rockchip_priv_data {
+@@ -24,6 +25,7 @@ struct dw_mci_rockchip_priv_data {
  	struct clk		*sample_clk;
  	int			default_sample_phase;
  	int			num_phases;
@@ -8782,7 +9518,7 @@ index d36991acd6df..4b1754ba6a50 100644
  };
  
  static void dw_mci_rk3288_set_ios(struct dw_mci *host, struct mmc_ios *ios)
-@@ -31,6 +33,15 @@ static void dw_mci_rk3288_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+@@ -33,6 +35,15 @@ static void dw_mci_rk3288_set_ios(struct dw_mci *host, struct mmc_ios *ios)
  	unsigned int cclkin;
  	u32 bus_hz;
  
@@ -8798,7 +9534,7 @@ index d36991acd6df..4b1754ba6a50 100644
  	if (ios->clock == 0)
  		return;
  
-@@ -283,6 +294,10 @@ static int dw_mci_rk3288_parse_dt(struct dw_mci *host)
+@@ -285,6 +296,10 @@ static int dw_mci_rk3288_parse_dt(struct dw_mci *host)
  	if (IS_ERR(priv->sample_clk))
  		dev_dbg(host->dev, "ciu-sample not available\n");
  
@@ -8810,10 +9546,10 @@ index d36991acd6df..4b1754ba6a50 100644
  
  	return 0;
 diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
-index 737e2bfdedc2..92bf24fc6a2a 100644
+index cfb891430174..f3765c56610d 100644
 --- a/drivers/mmc/host/sdhci-of-arasan.c
 +++ b/drivers/mmc/host/sdhci-of-arasan.c
-@@ -1674,8 +1674,11 @@ static int sdhci_arasan_probe(struct platform_device *pdev)
+@@ -1705,8 +1705,11 @@ static int sdhci_arasan_probe(struct platform_device *pdev)
  					sdhci_arasan_hs400_enhanced_strobe;
  		host->mmc_host_ops.start_signal_voltage_switch =
  					sdhci_arasan_voltage_switch;
@@ -8828,7 +9564,7 @@ index 737e2bfdedc2..92bf24fc6a2a 100644
  		if (!of_property_read_bool(np, "disable-cqe-dcmd"))
  			host->mmc->caps2 |= MMC_CAP2_CQE_DCMD;
 diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
-index 2af4c76bcf02..6616ab62befb 100644
+index a9a0dca0c030..7464077e513c 100644
 --- a/drivers/net/ethernet/realtek/r8169_main.c
 +++ b/drivers/net/ethernet/realtek/r8169_main.c
 @@ -21,6 +21,7 @@
@@ -8839,7 +9575,7 @@ index 2af4c76bcf02..6616ab62befb 100644
  #include <linux/tcp.h>
  #include <linux/interrupt.h>
  #include <linux/dma-mapping.h>
-@@ -297,6 +298,7 @@ enum rtl8168_8101_registers {
+@@ -285,6 +286,7 @@ enum rtl8168_8101_registers {
  };
  
  enum rtl8168_registers {
@@ -8847,7 +9583,7 @@ index 2af4c76bcf02..6616ab62befb 100644
  	LED_FREQ		= 0x1a,
  	EEE_LED			= 0x1b,
  	ERIDR			= 0x70,
-@@ -2140,6 +2142,15 @@ void r8169_apply_firmware(struct rtl8169_private *tp)
+@@ -2096,6 +2098,15 @@ void r8169_apply_firmware(struct rtl8169_private *tp)
  	}
  }
  
@@ -8863,7 +9599,7 @@ index 2af4c76bcf02..6616ab62befb 100644
  static void rtl8168_config_eee_mac(struct rtl8169_private *tp)
  {
  	/* Adjust EEE LED frequency */
-@@ -3214,6 +3225,7 @@ static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
+@@ -3209,6 +3220,7 @@ static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
  	rtl_eri_write(tp, 0xb8, ERIAR_MASK_0011, 0x0000);
  
  	rtl8168_config_eee_mac(tp);
@@ -8872,10 +9608,10 @@ index 2af4c76bcf02..6616ab62befb 100644
  	RTL_W8(tp, DLLPR, RTL_R8(tp, DLLPR) & ~PFM_EN);
  	RTL_W8(tp, MISC_1, RTL_R8(tp, MISC_1) & ~PFM_D3COLD_EN);
 diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-index c469abc91fa1..9fcc326666e5 100644
+index cf682a9e3fff..db1109ce3255 100644
 --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
 +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-@@ -1531,8 +1531,6 @@ static int rk_gmac_powerup(struct rk_priv_data *bsp_priv)
+@@ -1766,8 +1766,6 @@ static int rk_gmac_powerup(struct rk_priv_data *bsp_priv)
  		return ret;
  	}
  
@@ -8884,7 +9620,7 @@ index c469abc91fa1..9fcc326666e5 100644
  	if (bsp_priv->integrated_phy)
  		rk_gmac_integrated_phy_powerup(bsp_priv);
  
-@@ -1544,8 +1542,6 @@ static void rk_gmac_powerdown(struct rk_priv_data *gmac)
+@@ -1779,8 +1777,6 @@ static void rk_gmac_powerdown(struct rk_priv_data *gmac)
  	if (gmac->integrated_phy)
  		rk_gmac_integrated_phy_powerdown(gmac);
  
@@ -8893,7 +9629,7 @@ index c469abc91fa1..9fcc326666e5 100644
  	phy_power_on(gmac, false);
  	gmac_clk_enable(gmac, false);
  }
-@@ -1633,7 +1629,8 @@ static int rk_gmac_remove(struct platform_device *pdev)
+@@ -1868,7 +1864,8 @@ static int rk_gmac_remove(struct platform_device *pdev)
  	struct rk_priv_data *bsp_priv = get_stmmac_bsp_priv(&pdev->dev);
  	int ret = stmmac_dvr_remove(&pdev->dev);
  
@@ -8903,7 +9639,7 @@ index c469abc91fa1..9fcc326666e5 100644
  
  	return ret;
  }
-@@ -1645,7 +1642,7 @@ static int rk_gmac_suspend(struct device *dev)
+@@ -1880,7 +1877,7 @@ static int rk_gmac_suspend(struct device *dev)
  	int ret = stmmac_suspend(dev);
  
  	/* Keep the PHY up if we use Wake-on-Lan. */
@@ -8912,7 +9648,7 @@ index c469abc91fa1..9fcc326666e5 100644
  		rk_gmac_powerdown(bsp_priv);
  		bsp_priv->suspended = true;
  	}
-@@ -1667,7 +1664,24 @@ static int rk_gmac_resume(struct device *dev)
+@@ -1902,7 +1899,24 @@ static int rk_gmac_resume(struct device *dev)
  }
  #endif /* CONFIG_PM_SLEEP */
  
@@ -8939,13 +9675,18 @@ index c469abc91fa1..9fcc326666e5 100644
  static const struct of_device_id rk_gmac_dwmac_match[] = {
  	{ .compatible = "rockchip,px30-gmac",	.data = &px30_ops   },
 diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index b4f83c865568..b8dbeb8412e8 100644
+index 1559a4dafd41..a48c52a224be 100644
 --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
 +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -1233,7 +1233,10 @@ static int stmmac_init_phy(struct net_device *dev)
+@@ -1155,12 +1155,10 @@ static int stmmac_init_phy(struct net_device *dev)
  		int addr = priv->plat->phy_addr;
  		struct phy_device *phydev;
  
+-		if (addr < 0) {
+-			netdev_err(priv->dev, "no phy found\n");
+-			return -ENODEV;
+-		}
+-
 -		phydev = mdiobus_get_phy(priv->mii, addr);
 +		if (addr == -1)
 +			phydev = phy_find_first(priv->mii);
@@ -8954,7 +9695,7 @@ index b4f83c865568..b8dbeb8412e8 100644
  		if (!phydev) {
  			netdev_err(priv->dev, "no phy at addr %d\n", addr);
  			return -ENODEV;
-@@ -6975,6 +6978,8 @@ int stmmac_dvr_probe(struct device *device,
+@@ -7086,6 +7084,8 @@ int stmmac_dvr_probe(struct device *device,
  	struct net_device *ndev = NULL;
  	struct stmmac_priv *priv;
  	u32 rxq;
@@ -8963,7 +9704,7 @@ index b4f83c865568..b8dbeb8412e8 100644
  	int i, ret = 0;
  
  	ndev = devm_alloc_etherdev_mqs(device, sizeof(struct stmmac_priv),
-@@ -6995,6 +7000,13 @@ int stmmac_dvr_probe(struct device *device,
+@@ -7106,6 +7106,13 @@ int stmmac_dvr_probe(struct device *device,
  	priv->dev->base_addr = (unsigned long)res->addr;
  	priv->plat->dma_cfg->multi_msi_en = priv->plat->multi_msi_en;
  
@@ -8977,7 +9718,7 @@ index b4f83c865568..b8dbeb8412e8 100644
  	priv->dev->irq = res->irq;
  	priv->wol_irq = res->wol_irq;
  	priv->lpi_irq = res->lpi_irq;
-@@ -7061,6 +7073,7 @@ int stmmac_dvr_probe(struct device *device,
+@@ -7173,6 +7180,7 @@ int stmmac_dvr_probe(struct device *device,
  		priv->plat->dma_cfg->dche = false;
  
  	stmmac_check_ether_addr(priv);
@@ -8986,10 +9727,10 @@ index b4f83c865568..b8dbeb8412e8 100644
  	ndev->netdev_ops = &stmmac_netdev_ops;
  
 diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
-index 902495afcb38..46cf9d571407 100644
+index c57a0262fb64..f91b5e396572 100644
 --- a/drivers/net/phy/Kconfig
 +++ b/drivers/net/phy/Kconfig
-@@ -245,7 +245,7 @@ config MOTORCOMM_PHY
+@@ -260,7 +260,7 @@ config MOTORCOMM_PHY
  	tristate "Motorcomm PHYs"
  	help
  	  Enables support for Motorcomm network PHYs.
@@ -9440,7 +10181,7 @@ index 7e6ac2c5e27e..8db39a911e5f 100644
  MODULE_DEVICE_TABLE(mdio, motorcomm_tbl);
 +
 diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-index 0d1d92ef7909..31163f583078 100644
+index fc1458f96e17..9ab2635e6d80 100644
 --- a/drivers/net/usb/r8152.c
 +++ b/drivers/net/usb/r8152.c
 @@ -6,6 +6,7 @@
@@ -9462,7 +10203,7 @@ index 0d1d92ef7909..31163f583078 100644
  #define R8152_PHY_ID		32
  
  #define PLA_IDR			0xc000
-@@ -1678,24 +1683,29 @@ static int determine_ethernet_addr(struct r8152 *tp, struct sockaddr *sa)
+@@ -1686,24 +1691,29 @@ static int determine_ethernet_addr(struct r8152 *tp, struct sockaddr *sa)
  
  	sa->sa_family = dev->type;
  
@@ -9505,7 +10246,7 @@ index 0d1d92ef7909..31163f583078 100644
  		netif_err(tp, probe, dev, "Invalid ether addr %pM\n",
  			  sa->sa_data);
  		eth_hw_addr_random(dev);
-@@ -6864,6 +6874,18 @@ static void rtl_tally_reset(struct r8152 *tp)
+@@ -6896,6 +6906,18 @@ static void rtl_tally_reset(struct r8152 *tp)
  	ocp_write_word(tp, MCU_TYPE_PLA, PLA_RSTTALLY, ocp_data);
  }
  
@@ -9524,7 +10265,7 @@ index 0d1d92ef7909..31163f583078 100644
  static void r8152b_init(struct r8152 *tp)
  {
  	u32 ocp_data;
-@@ -6905,6 +6927,8 @@ static void r8152b_init(struct r8152 *tp)
+@@ -6937,6 +6959,8 @@ static void r8152b_init(struct r8152 *tp)
  	ocp_data = ocp_read_word(tp, MCU_TYPE_USB, USB_USB_CTRL);
  	ocp_data &= ~(RX_AGG_DISABLE | RX_ZERO_EN);
  	ocp_write_word(tp, MCU_TYPE_USB, USB_USB_CTRL, ocp_data);
@@ -9533,7 +10274,7 @@ index 0d1d92ef7909..31163f583078 100644
  }
  
  static void r8153_init(struct r8152 *tp)
-@@ -7045,6 +7069,8 @@ static void r8153_init(struct r8152 *tp)
+@@ -7077,6 +7101,8 @@ static void r8153_init(struct r8152 *tp)
  		tp->coalesce = COALESCE_SLOW;
  		break;
  	}
@@ -9542,7 +10283,7 @@ index 0d1d92ef7909..31163f583078 100644
  }
  
  static void r8153b_init(struct r8152 *tp)
-@@ -7127,6 +7153,8 @@ static void r8153b_init(struct r8152 *tp)
+@@ -7159,6 +7185,8 @@ static void r8153b_init(struct r8152 *tp)
  	rtl_tally_reset(tp);
  
  	tp->coalesce = 15000;	/* 15 us */
@@ -9551,7 +10292,7 @@ index 0d1d92ef7909..31163f583078 100644
  }
  
  static void r8153c_init(struct r8152 *tp)
-@@ -7209,6 +7237,8 @@ static void r8153c_init(struct r8152 *tp)
+@@ -7241,6 +7269,8 @@ static void r8153c_init(struct r8152 *tp)
  	rtl_tally_reset(tp);
  
  	tp->coalesce = 15000;	/* 15 us */
@@ -9560,7 +10301,7 @@ index 0d1d92ef7909..31163f583078 100644
  }
  
  static void r8156_hw_phy_cfg(struct r8152 *tp)
-@@ -8062,6 +8092,8 @@ static void r8156_init(struct r8152 *tp)
+@@ -8104,6 +8134,8 @@ static void r8156_init(struct r8152 *tp)
  	rtl_tally_reset(tp);
  
  	tp->coalesce = 15000;	/* 15 us */
@@ -9569,7 +10310,7 @@ index 0d1d92ef7909..31163f583078 100644
  }
  
  static void r8156b_init(struct r8152 *tp)
-@@ -8192,6 +8224,8 @@ static void r8156b_init(struct r8152 *tp)
+@@ -8234,6 +8266,8 @@ static void r8156b_init(struct r8152 *tp)
  	rtl_tally_reset(tp);
  
  	tp->coalesce = 15000;	/* 15 us */
@@ -9579,30 +10320,30 @@ index 0d1d92ef7909..31163f583078 100644
  
  static bool rtl_check_vendor_ok(struct usb_interface *intf)
 diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-index ac02244a6fdf..369d845ed61e 100644
+index e300278ea38c..83ffd2588f08 100644
 --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
 +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-@@ -989,6 +989,7 @@ static const struct sdio_device_id brcmf_sdmmc_ids[] = {
+@@ -981,6 +981,7 @@ static const struct sdio_device_id brcmf_sdmmc_ids[] = {
  	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_4354),
  	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_4356),
  	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_4359),
 +	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43751),
  	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_CYPRESS_4373),
  	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_CYPRESS_43012),
- 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_CYPRESS_43752),
+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_CYPRESS_43439),
 diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/chip.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/chip.c
-index 1ee49f9e325d..045266ff7a0d 100644
+index 121893bbaa1d..7e39a9049ee0 100644
 --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/chip.c
 +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/chip.c
-@@ -729,6 +729,7 @@ static u32 brcmf_chip_tcm_rambase(struct brcmf_chip_priv *ci)
+@@ -731,6 +731,7 @@ static u32 brcmf_chip_tcm_rambase(struct brcmf_chip_priv *ci)
  	case BRCM_CC_4364_CHIP_ID:
  	case CY_CC_4373_CHIP_ID:
  		return 0x160000;
 +	case BRCM_CC_43751_CHIP_ID:
  	case CY_CC_43752_CHIP_ID:
  		return 0x170000;
- 	default:
-@@ -1423,6 +1424,7 @@ bool brcmf_chip_sr_capable(struct brcmf_chip *pub)
+ 	case BRCM_CC_4378_CHIP_ID:
+@@ -1433,6 +1434,7 @@ bool brcmf_chip_sr_capable(struct brcmf_chip *pub)
  		reg = chip->ops->read32(chip->ctx, addr);
  		return (reg & CC_SR_CTL0_ENABLE_MASK) != 0;
  	case BRCM_CC_4359_CHIP_ID:
@@ -9611,10 +10352,10 @@ index 1ee49f9e325d..045266ff7a0d 100644
  	case CY_CC_43012_CHIP_ID:
  		addr = CORE_CC_REG(pmu->base, retention_ctl);
 diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-index f7961b22e051..dc491b6b1dac 100644
+index e265a2e411a0..ee58251b6b43 100644
 --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
 +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-@@ -626,6 +626,7 @@ BRCMF_FW_DEF(4359, "brcmfmac4359-sdio");
+@@ -627,6 +627,7 @@ BRCMF_FW_DEF(4359, "brcmfmac4359-sdio");
  BRCMF_FW_CLM_DEF(4373, "brcmfmac4373-sdio");
  BRCMF_FW_CLM_DEF(43012, "brcmfmac43012-sdio");
  BRCMF_FW_CLM_DEF(43752, "brcmfmac43752-sdio");
@@ -9622,15 +10363,15 @@ index f7961b22e051..dc491b6b1dac 100644
  
  /* firmware config files */
  MODULE_FIRMWARE(BRCMF_FW_DEFAULT_PATH "brcmfmac*-sdio.*.txt");
-@@ -654,6 +655,7 @@ static const struct brcmf_firmware_mapping brcmf_sdio_fwnames[] = {
+@@ -656,6 +657,7 @@ static const struct brcmf_firmware_mapping brcmf_sdio_fwnames[] = {
  	BRCMF_FW_ENTRY(BRCM_CC_4354_CHIP_ID, 0xFFFFFFFF, 4354),
  	BRCMF_FW_ENTRY(BRCM_CC_4356_CHIP_ID, 0xFFFFFFFF, 4356),
  	BRCMF_FW_ENTRY(BRCM_CC_4359_CHIP_ID, 0xFFFFFFFF, 4359),
 +	BRCMF_FW_ENTRY(BRCM_CC_43751_CHIP_ID, 0xFFFFFFFF, 43751),
  	BRCMF_FW_ENTRY(CY_CC_4373_CHIP_ID, 0xFFFFFFFF, 4373),
  	BRCMF_FW_ENTRY(CY_CC_43012_CHIP_ID, 0xFFFFFFFF, 43012),
- 	BRCMF_FW_ENTRY(CY_CC_43752_CHIP_ID, 0xFFFFFFFF, 43752)
-@@ -3423,7 +3425,8 @@ static int brcmf_sdio_download_firmware(struct brcmf_sdio *bus,
+ 	BRCMF_FW_ENTRY(CY_CC_43439_CHIP_ID, 0xFFFFFFFF, 43439),
+@@ -3427,7 +3429,8 @@ static int brcmf_sdio_download_firmware(struct brcmf_sdio *bus,
  static bool brcmf_sdio_aos_no_decode(struct brcmf_sdio *bus)
  {
  	if (bus->ci->chip == CY_CC_43012_CHIP_ID ||
@@ -9640,7 +10381,7 @@ index f7961b22e051..dc491b6b1dac 100644
  		return true;
  	else
  		return false;
-@@ -4267,6 +4270,7 @@ static void brcmf_sdio_firmware_callback(struct device *dev, int err,
+@@ -4265,6 +4268,7 @@ static void brcmf_sdio_firmware_callback(struct device *dev, int err,
  				   bus->hostintmask, NULL);
  
  		switch (sdiod->func1->device) {
@@ -9649,22 +10390,30 @@ index f7961b22e051..dc491b6b1dac 100644
  		case SDIO_DEVICE_ID_BROADCOM_CYPRESS_43752:
  			brcmf_dbg(INFO, "set F2 watermark to 0x%x*4 bytes\n",
 diff --git a/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h b/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h
-index 9d81320164ce..6ac5b8210396 100644
+index f4939cf62767..4e3fe0d37c99 100644
 --- a/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h
 +++ b/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h
-@@ -50,6 +50,7 @@
- #define BRCM_CC_43664_CHIP_ID		43664
+@@ -52,6 +52,7 @@
  #define BRCM_CC_43666_CHIP_ID		43666
  #define BRCM_CC_4371_CHIP_ID		0x4371
+ #define BRCM_CC_4378_CHIP_ID		0x4378
 +#define BRCM_CC_43751_CHIP_ID		0xAAE7
  #define CY_CC_4373_CHIP_ID		0x4373
  #define CY_CC_43012_CHIP_ID		43012
- #define CY_CC_43752_CHIP_ID		43752
+ #define CY_CC_43439_CHIP_ID		43439
 diff --git a/drivers/pci/controller/pcie-rockchip-host.c b/drivers/pci/controller/pcie-rockchip-host.c
-index c52316d0bfd2..db2355dd7bc2 100644
+index 7352b5ff8d35..99ebe8e9a5ea 100644
 --- a/drivers/pci/controller/pcie-rockchip-host.c
 +++ b/drivers/pci/controller/pcie-rockchip-host.c
-@@ -327,6 +327,8 @@ static int rockchip_pcie_host_init_port(struct rockchip_pcie *rockchip)
+@@ -298,6 +298,7 @@ static int rockchip_pcie_host_init_port(struct rockchip_pcie *rockchip)
+ 	u32 status;
+ 
+ 	gpiod_set_value_cansleep(rockchip->ep_gpio, 0);
++	usleep_range(5000, 6000);
+ 
+ 	err = rockchip_pcie_init_port(rockchip);
+ 	if (err)
+@@ -325,6 +326,8 @@ static int rockchip_pcie_host_init_port(struct rockchip_pcie *rockchip)
  	rockchip_pcie_write(rockchip, PCIE_CLIENT_LINK_TRAIN_ENABLE,
  			    PCIE_CLIENT_CONFIG);
  
@@ -9674,7 +10423,7 @@ index c52316d0bfd2..db2355dd7bc2 100644
  
  	/* 500ms timeout value should be enough for Gen1/2 training */
 diff --git a/drivers/phy/rockchip/Kconfig b/drivers/phy/rockchip/Kconfig
-index e812adad7242..f10c6498bc45 100644
+index 94360fc96a6f..b8b0ff511364 100644
 --- a/drivers/phy/rockchip/Kconfig
 +++ b/drivers/phy/rockchip/Kconfig
 @@ -48,6 +48,14 @@ config PHY_ROCKCHIP_INNO_USB2
@@ -9693,7 +10442,7 @@ index e812adad7242..f10c6498bc45 100644
  	tristate "Rockchip Innosilicon MIPI CSI PHY driver"
  	depends on (ARCH_ROCKCHIP || COMPILE_TEST) && OF
 diff --git a/drivers/phy/rockchip/Makefile b/drivers/phy/rockchip/Makefile
-index f0eec212b2aa..86ec12bc2507 100644
+index 7eab129230d1..dc62d4876738 100644
 --- a/drivers/phy/rockchip/Makefile
 +++ b/drivers/phy/rockchip/Makefile
 @@ -6,6 +6,7 @@ obj-$(CONFIG_PHY_ROCKCHIP_INNO_CSIDPHY)	+= phy-rockchip-inno-csidphy.o
@@ -9701,9 +10450,9 @@ index f0eec212b2aa..86ec12bc2507 100644
  obj-$(CONFIG_PHY_ROCKCHIP_INNO_HDMI)	+= phy-rockchip-inno-hdmi.o
  obj-$(CONFIG_PHY_ROCKCHIP_INNO_USB2)	+= phy-rockchip-inno-usb2.o
 +obj-$(CONFIG_PHY_ROCKCHIP_INNO_USB3)	+= phy-rockchip-inno-usb3.o
+ obj-$(CONFIG_PHY_ROCKCHIP_NANENG_COMBO_PHY)	+= phy-rockchip-naneng-combphy.o
  obj-$(CONFIG_PHY_ROCKCHIP_PCIE)		+= phy-rockchip-pcie.o
- obj-$(CONFIG_PHY_ROCKCHIP_TYPEC)	+= phy-rockchip-typec.o
- obj-$(CONFIG_PHY_ROCKCHIP_USB)		+= phy-rockchip-usb.o
+ obj-$(CONFIG_PHY_ROCKCHIP_SNPS_PCIE3)	+= phy-rockchip-snps-pcie3.o
 diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb3.c b/drivers/phy/rockchip/phy-rockchip-inno-usb3.c
 new file mode 100644
 index 000000000000..a84a017e4bbd
@@ -10886,7 +11635,7 @@ index 000000000000..a84a017e4bbd
 +MODULE_DESCRIPTION("Rockchip USB 3.0 PHY driver");
 +MODULE_LICENSE("GPL v2");
 diff --git a/drivers/pwm/pwm-rockchip.c b/drivers/pwm/pwm-rockchip.c
-index f3647b317152..9afdcd25c4a3 100644
+index 3ec7d1756903..51f4170a1fa2 100644
 --- a/drivers/pwm/pwm-rockchip.c
 +++ b/drivers/pwm/pwm-rockchip.c
 @@ -11,6 +11,7 @@
@@ -10897,7 +11646,7 @@ index f3647b317152..9afdcd25c4a3 100644
  #include <linux/platform_device.h>
  #include <linux/pwm.h>
  #include <linux/time.h>
-@@ -392,6 +393,11 @@ static int rockchip_pwm_remove(struct platform_device *pdev)
+@@ -388,6 +389,11 @@ static int rockchip_pwm_remove(struct platform_device *pdev)
  	return 0;
  }
  
@@ -10909,7 +11658,7 @@ index f3647b317152..9afdcd25c4a3 100644
  static struct platform_driver rockchip_pwm_driver = {
  	.driver = {
  		.name = "rockchip-pwm",
-@@ -399,6 +405,7 @@ static struct platform_driver rockchip_pwm_driver = {
+@@ -395,6 +401,7 @@ static struct platform_driver rockchip_pwm_driver = {
  	},
  	.probe = rockchip_pwm_probe,
  	.remove = rockchip_pwm_remove,
@@ -10918,10 +11667,10 @@ index f3647b317152..9afdcd25c4a3 100644
  module_platform_driver(rockchip_pwm_driver);
  
 diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
-index e8a30c4c5aec..26c2e17d9cb0 100644
+index e461c071189b..a65fa9f4fe94 100644
 --- a/drivers/soc/Kconfig
 +++ b/drivers/soc/Kconfig
-@@ -23,5 +23,6 @@ source "drivers/soc/ti/Kconfig"
+@@ -27,5 +27,6 @@ source "drivers/soc/ti/Kconfig"
  source "drivers/soc/ux500/Kconfig"
  source "drivers/soc/versatile/Kconfig"
  source "drivers/soc/xilinx/Kconfig"
@@ -10929,10 +11678,10 @@ index e8a30c4c5aec..26c2e17d9cb0 100644
  
  endmenu
 diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-index a05e9fbcd3e0..ce81c458e22a 100644
+index 69ba6508cf2c..958de55820a8 100644
 --- a/drivers/soc/Makefile
 +++ b/drivers/soc/Makefile
-@@ -29,3 +29,4 @@ obj-y				+= ti/
+@@ -33,3 +33,4 @@ obj-y				+= ti/
  obj-$(CONFIG_ARCH_U8500)	+= ux500/
  obj-$(CONFIG_PLAT_VERSATILE)	+= versatile/
  obj-y				+= xilinx/
@@ -11111,12 +11860,12 @@ index 000000000000..886a8e1f7dc0
 +MODULE_DESCRIPTION("FriendlyElec NanoPi Series Machine Driver");
 +MODULE_LICENSE("GPL v2");
 diff --git a/drivers/soc/rockchip/Kconfig b/drivers/soc/rockchip/Kconfig
-index 25eb2c1e31bb..5d1dff9cec24 100644
+index aff2f7e95237..bf6feded4501 100644
 --- a/drivers/soc/rockchip/Kconfig
 +++ b/drivers/soc/rockchip/Kconfig
-@@ -34,4 +34,10 @@ config ROCKCHIP_PM_DOMAINS
+@@ -34,6 +34,12 @@ config ROCKCHIP_PM_DOMAINS
  
-           If unsure, say N.
+ 	  If unsure, say N.
  
 +config ROCKCHIP_PM_CONFIG
 +	bool "Rockchip suspend mode config"
@@ -11124,12 +11873,14 @@ index 25eb2c1e31bb..5d1dff9cec24 100644
 +	help
 +	  Say Y here if you want to set the suspend mode to the ATF.
 +
- endif
+ config ROCKCHIP_DTPM
+ 	tristate "Rockchip DTPM hierarchy"
+ 	depends on DTPM && m
 diff --git a/drivers/soc/rockchip/Makefile b/drivers/soc/rockchip/Makefile
-index 875032f7344e..7239c099e7f8 100644
+index 05f31a4e743c..77db2ca017cb 100644
 --- a/drivers/soc/rockchip/Makefile
 +++ b/drivers/soc/rockchip/Makefile
-@@ -2,6 +2,8 @@
+@@ -2,7 +2,9 @@
  #
  # Rockchip Soc drivers
  #
@@ -11138,11 +11889,12 @@ index 875032f7344e..7239c099e7f8 100644
  obj-$(CONFIG_ROCKCHIP_IODOMAIN) += io-domain.o
  obj-$(CONFIG_ROCKCHIP_PM_DOMAINS) += pm_domains.o
 +obj-$(CONFIG_ROCKCHIP_PM_CONFIG) += pm_config.o
+ obj-$(CONFIG_ROCKCHIP_DTPM) += dtpm.o
 diff --git a/drivers/soc/rockchip/io-domain.c b/drivers/soc/rockchip/io-domain.c
-index 9df513d1219b..79c40977c08a 100644
+index 6619256c2d11..c661c5eafb0c 100644
 --- a/drivers/soc/rockchip/io-domain.c
 +++ b/drivers/soc/rockchip/io-domain.c
-@@ -692,7 +692,11 @@ static struct platform_driver rockchip_iodomain_driver = {
+@@ -712,7 +712,11 @@ static struct platform_driver rockchip_iodomain_driver = {
  	},
  };
  
@@ -11312,10 +12064,10 @@ index 000000000000..4c82f6561c8c
 +}
 +subsys_initcall(rockchip_pm_drv_register);
 diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
-index 66b1454c4db2..ec71fa63a14e 100644
+index 864fef540a39..75b332119e71 100644
 --- a/drivers/usb/dwc3/Kconfig
 +++ b/drivers/usb/dwc3/Kconfig
-@@ -117,6 +117,16 @@ config USB_DWC3_OF_SIMPLE
+@@ -118,6 +118,16 @@ config USB_DWC3_OF_SIMPLE
  	  Currently supports Xilinx and Qualcomm DWC USB3 IP.
  	  Say 'Y' or 'M' if you have one such device.
  
@@ -11333,10 +12085,10 @@ index 66b1454c4db2..ec71fa63a14e 100644
  	tristate "STMicroelectronics Platforms"
  	depends on (ARCH_STI || COMPILE_TEST) && OF
 diff --git a/drivers/usb/dwc3/Makefile b/drivers/usb/dwc3/Makefile
-index 2d499de6f66a..c3f2d02bb8d0 100644
+index 9f66bd82b639..5dccf31b1b5b 100644
 --- a/drivers/usb/dwc3/Makefile
 +++ b/drivers/usb/dwc3/Makefile
-@@ -49,6 +49,7 @@ obj-$(CONFIG_USB_DWC3_HAPS)		+= dwc3-haps.o
+@@ -50,6 +50,7 @@ obj-$(CONFIG_USB_DWC3_HAPS)		+= dwc3-haps.o
  obj-$(CONFIG_USB_DWC3_KEYSTONE)		+= dwc3-keystone.o
  obj-$(CONFIG_USB_DWC3_MESON_G12A)	+= dwc3-meson-g12a.o
  obj-$(CONFIG_USB_DWC3_OF_SIMPLE)	+= dwc3-of-simple.o
@@ -11345,13 +12097,25 @@ index 2d499de6f66a..c3f2d02bb8d0 100644
  obj-$(CONFIG_USB_DWC3_QCOM)		+= dwc3-qcom.o
  obj-$(CONFIG_USB_DWC3_IMX8MP)		+= dwc3-imx8mp.o
 diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index cfac5503aa66..a99e0af0cad7 100644
+index 3ee70ffaf003..24c4cca33717 100644
 --- a/drivers/usb/dwc3/core.c
 +++ b/drivers/usb/dwc3/core.c
-@@ -1386,6 +1386,10 @@ static void dwc3_get_properties(struct dwc3 *dwc)
- 				"snps,dis-tx-ipgap-linecheck-quirk");
- 	dwc->parkmode_disable_ss_quirk = device_property_read_bool(dev,
+@@ -277,9 +277,9 @@ int dwc3_core_soft_reset(struct dwc3 *dwc)
+ 	/*
+ 	 * We're resetting only the device side because, if we're in host mode,
+ 	 * XHCI driver will reset the host block. If dwc3 was configured for
+-	 * host-only mode or current role is host, then we can return early.
++	 * host-only mode, then we can return early.
+ 	 */
+-	if (dwc->dr_mode == USB_DR_MODE_HOST || dwc->current_dr_role == DWC3_GCTL_PRTCAP_HOST)
++	if (dwc->current_dr_role == DWC3_GCTL_PRTCAP_HOST)
+ 		return 0;
+ 
+ 	reg = dwc3_readl(dwc->regs, DWC3_DCTL);
+@@ -1541,6 +1541,10 @@ static void dwc3_get_properties(struct dwc3 *dwc)
  				"snps,parkmode-disable-ss-quirk");
+ 	dwc->gfladj_refclk_lpm_sel = device_property_read_bool(dev,
+ 				"snps,gfladj-refclk-lpm-sel-quirk");
 +	dwc->xhci_slow_suspend_quirk = device_property_read_bool(dev,
 +				"snps,xhci-slow-suspend-quirk");
 +	dwc->xhci_trb_ent_quirk = device_property_read_bool(dev,
@@ -11360,26 +12124,26 @@ index cfac5503aa66..a99e0af0cad7 100644
  	dwc->tx_de_emphasis_quirk = device_property_read_bool(dev,
  				"snps,tx_de_emphasis_quirk");
 diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
-index fd5d42ec5350..8eb495d04d82 100644
+index 80cc532ba9d5..0e66b8caae10 100644
 --- a/drivers/usb/dwc3/core.h
 +++ b/drivers/usb/dwc3/core.h
-@@ -1073,6 +1073,12 @@ struct dwc3_scratchpad_array {
-  *			check during HS transmit.
+@@ -1099,6 +1099,12 @@ struct dwc3_scratchpad_array {
+  *			generation after resume from suspend.
   * @parkmode_disable_ss_quirk: set if we need to disable all SuperSpeed
   *			instances in park mode.
 + * @xhci_slow_suspend_quirk: set if need an extraordinary delay to wait
 + *			for xHC enter the Halted state after the Run/Stop
 + *			(R/S) bit is cleared to '0'.
 + * @xhci_trb_ent_quirk: set if need to enable the Evaluate Next TRB(ENT)
-+			flag in the TRB data structure to force xHC to
-+			pre-fetch the next TRB of a TD.
++ *			flag in the TRB data structure to force xHC to
++ *			pre-fetch the next TRB of a TD.
   * @tx_de_emphasis_quirk: set if we enable Tx de-emphasis quirk
   * @tx_de_emphasis: Tx de-emphasis value
   *	0	- -6dB de-emphasis
-@@ -1283,6 +1289,8 @@ struct dwc3 {
- 	unsigned		dis_del_phy_power_chg_quirk:1;
- 	unsigned		dis_tx_ipgap_linecheck_quirk:1;
+@@ -1317,6 +1323,8 @@ struct dwc3 {
+ 	unsigned		resume_hs_terminations:1;
  	unsigned		parkmode_disable_ss_quirk:1;
+ 	unsigned		gfladj_refclk_lpm_sel:1;
 +	unsigned		xhci_slow_suspend_quirk:1;
 +	unsigned		xhci_trb_ent_quirk:1;
  
@@ -11678,10 +12442,10 @@ index 000000000000..5c907b97d6a6
 +MODULE_LICENSE("GPL v2");
 +MODULE_DESCRIPTION("DesignWare USB3 rockchip-inno Glue Layer");
 diff --git a/drivers/usb/dwc3/host.c b/drivers/usb/dwc3/host.c
-index f29a264635aa..19cbda699916 100644
+index f6f13e7f1ba1..82edca62374c 100644
 --- a/drivers/usb/dwc3/host.c
 +++ b/drivers/usb/dwc3/host.c
-@@ -44,11 +44,13 @@ static int dwc3_host_get_irq(struct dwc3 *dwc)
+@@ -66,15 +66,24 @@ static int dwc3_host_get_irq(struct dwc3 *dwc)
  
  int dwc3_host_init(struct dwc3 *dwc)
  {
@@ -11689,28 +12453,25 @@ index f29a264635aa..19cbda699916 100644
 +	struct property_entry	props[5];
  	struct platform_device	*xhci;
  	int			ret, irq;
- 	struct resource		*res;
- 	struct platform_device	*dwc3_pdev = to_platform_device(dwc->dev);
-+	struct cpumask		cpumask;
 +	u32			cpu_id;
  	int			prop_idx = 0;
  
  	irq = dwc3_host_get_irq(dwc);
-@@ -64,6 +66,13 @@ int dwc3_host_init(struct dwc3 *dwc)
- 	if (!res)
- 		return -ENOMEM;
+ 	if (irq < 0)
+ 		return irq;
  
 +	if (!of_property_read_u32(dwc->dev->of_node, "handle_cpu_id", &cpu_id)) {
++		struct cpumask cpumask;
 +		cpumask_clear(&cpumask);
 +		cpumask_set_cpu(cpu_id, &cpumask);
 +		irq_set_affinity(irq, &cpumask);
 +		dev_dbg(dwc->dev, "setup irq on cpu%d\n", cpu_id);
 +	}
 +
- 	dwc->xhci_resources[1].start = irq;
- 	dwc->xhci_resources[1].end = irq;
- 	dwc->xhci_resources[1].flags = res->flags;
-@@ -95,6 +104,12 @@ int dwc3_host_init(struct dwc3 *dwc)
+ 	xhci = platform_device_alloc("xhci-hcd", PLATFORM_DEVID_AUTO);
+ 	if (!xhci) {
+ 		dev_err(dwc->dev, "couldn't allocate xHCI device\n");
+@@ -100,6 +109,12 @@ int dwc3_host_init(struct dwc3 *dwc)
  	if (dwc->usb2_lpm_disable)
  		props[prop_idx++] = PROPERTY_ENTRY_BOOL("usb2-lpm-disable");
  
@@ -11724,10 +12485,10 @@ index f29a264635aa..19cbda699916 100644
  	 * WORKAROUND: dwc3 revisions <=3.00a have a limitation
  	 * where Port Disable command doesn't work.
 diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index dc570ce4e831..77bcaa606b30 100644
+index 5fb55bf19493..3f209c9914a2 100644
 --- a/drivers/usb/host/xhci-plat.c
 +++ b/drivers/usb/host/xhci-plat.c
-@@ -323,6 +323,12 @@ static int xhci_plat_probe(struct platform_device *pdev)
+@@ -301,6 +301,12 @@ static int xhci_plat_probe(struct platform_device *pdev)
  		if (device_property_read_bool(tmpdev, "quirk-broken-port-ped"))
  			xhci->quirks |= XHCI_BROKEN_PORT_PED;
  
@@ -11741,10 +12502,10 @@ index dc570ce4e831..77bcaa606b30 100644
  					 &xhci->imod_interval);
  	}
 diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index f9707997969d..8ff3c85084cb 100644
+index 281690c582cb..3b115ddbbaa8 100644
 --- a/drivers/usb/host/xhci-ring.c
 +++ b/drivers/usb/host/xhci-ring.c
-@@ -3586,6 +3586,7 @@ int xhci_queue_bulk_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
+@@ -3533,6 +3533,7 @@ int xhci_queue_bulk_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
  	bool more_trbs_coming = true;
  	bool need_zero_pkt = false;
  	bool first_trb = true;
@@ -11752,7 +12513,7 @@ index f9707997969d..8ff3c85084cb 100644
  	unsigned int num_trbs;
  	unsigned int start_cycle, num_sgs = 0;
  	unsigned int enqd_len, block_len, trb_buff_len, full_len;
-@@ -3622,6 +3623,13 @@ int xhci_queue_bulk_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
+@@ -3569,6 +3570,13 @@ int xhci_queue_bulk_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
  	if (urb->transfer_flags & URB_ZERO_PACKET && urb_priv->num_tds > 1)
  		need_zero_pkt = true;
  
@@ -11766,7 +12527,7 @@ index f9707997969d..8ff3c85084cb 100644
  	td = &urb_priv->td[0];
  
  	/*
-@@ -3650,6 +3658,13 @@ int xhci_queue_bulk_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
+@@ -3597,6 +3605,13 @@ int xhci_queue_bulk_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
  			first_trb = false;
  			if (start_cycle == 0)
  				field |= TRB_CYCLE;
@@ -11780,7 +12541,7 @@ index f9707997969d..8ff3c85084cb 100644
  		} else
  			field |= ring->cycle_state;
  
-@@ -3658,6 +3673,8 @@ int xhci_queue_bulk_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
+@@ -3605,6 +3620,8 @@ int xhci_queue_bulk_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
  		 */
  		if (enqd_len + trb_buff_len < full_len) {
  			field |= TRB_CHAIN;
@@ -11790,10 +12551,10 @@ index f9707997969d..8ff3c85084cb 100644
  				if (xhci_align_td(xhci, urb, enqd_len,
  						  &trb_buff_len,
 diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index 101f1956a96c..3317a033877f 100644
+index 1354310cb37b..d260214e0a5f 100644
 --- a/drivers/usb/host/xhci.h
 +++ b/drivers/usb/host/xhci.h
-@@ -1526,7 +1526,11 @@ static inline const char *xhci_trb_type_string(u8 type)
+@@ -1525,7 +1525,11 @@ static inline const char *xhci_trb_type_string(u8 type)
  #define TRB_SEGMENT_SIZE	(TRBS_PER_SEGMENT*16)
  #define TRB_SEGMENT_SHIFT	(ilog2(TRB_SEGMENT_SIZE))
  /* TRB buffer pointers can't cross 64KB boundaries */
@@ -11805,11 +12566,11 @@ index 101f1956a96c..3317a033877f 100644
  #define TRB_MAX_BUFF_SIZE	(1 << TRB_MAX_BUFF_SHIFT)
  /* How much data is left before the 64KB boundary? */
  #define TRB_BUFF_LEN_UP_TO_BOUNDARY(addr)	(TRB_MAX_BUFF_SIZE - \
-@@ -1903,6 +1907,7 @@ struct xhci_hcd {
- #define XHCI_NO_SOFT_RETRY	BIT_ULL(40)
- #define XHCI_BROKEN_D3COLD	BIT_ULL(41)
- #define XHCI_EP_CTX_BROKEN_DCS	BIT_ULL(42)
-+#define XHCI_TRB_ENT_QUIRK	BIT_ULL(43)
+@@ -1901,6 +1905,7 @@ struct xhci_hcd {
+ #define XHCI_RESET_TO_DEFAULT	BIT_ULL(44)
+ #define XHCI_ZHAOXIN_TRB_FETCH	BIT_ULL(45)
+ #define XHCI_ZHAOXIN_HOST	BIT_ULL(46)
++#define XHCI_TRB_ENT_QUIRK	BIT_ULL(47)
  
  	unsigned int		num_active_eps;
  	unsigned int		limit_active_eps;
@@ -12114,29 +12875,29 @@ index 000000000000..176c7cfcd989
 +#define RKPM_APIO5_SUSPEND			(1 << 5)
 +
 +#endif
-diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-index 0b48a0cf4262..c5dea3212617 100644
---- a/include/linux/genhd.h
-+++ b/include/linux/genhd.h
-@@ -91,6 +91,11 @@ struct partition_meta_info {
- #define GENHD_FL_NO_PART_SCAN			0x0200
- #define GENHD_FL_HIDDEN				0x0400
- 
-+#if defined(CONFIG_RK_PARTITION)
-+/* Flag of rockchip specific disk: eMMC/eSD, NVMe, etc. */
-+#define GENHD_FL_RKPART				0x0800
-+#endif
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 57674b3c5877..91ea15afa385 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -92,6 +92,11 @@ enum {
+ 	GENHD_FL_REMOVABLE			= 1 << 0,
+ 	GENHD_FL_HIDDEN				= 1 << 1,
+ 	GENHD_FL_NO_PART			= 1 << 2,
 +
++#if defined(CONFIG_RK_PARTITION)
++	/* Flag of rockchip specific disk: eMMC/eSD, NVMe, etc. */
++	GENHD_FL_RKPART				= 1 << 3,
++#endif
+ };
+ 
  enum {
- 	DISK_EVENT_MEDIA_CHANGE			= 1 << 0, /* media changed */
- 	DISK_EVENT_EJECT_REQUEST		= 1 << 1, /* eject requested */
 diff --git a/include/linux/mmc/sdio_ids.h b/include/linux/mmc/sdio_ids.h
-index a85c9f0bd470..a3a963f06a77 100644
+index 74f9d9a6d330..7535024d3533 100644
 --- a/include/linux/mmc/sdio_ids.h
 +++ b/include/linux/mmc/sdio_ids.h
-@@ -75,6 +75,7 @@
- #define SDIO_DEVICE_ID_BROADCOM_43364		0xa9a4
+@@ -76,6 +76,7 @@
  #define SDIO_DEVICE_ID_BROADCOM_43430		0xa9a6
+ #define SDIO_DEVICE_ID_BROADCOM_CYPRESS_43439	0xa9af
  #define SDIO_DEVICE_ID_BROADCOM_43455		0xa9bf
 +#define SDIO_DEVICE_ID_BROADCOM_43751		0xaae7
  #define SDIO_DEVICE_ID_BROADCOM_CYPRESS_43752	0xaae8
@@ -12216,6 +12977,22 @@ index 000000000000..1e48c3671b69
 +
 +#endif /* _MOTORCOMM_PHY_H */
 +
+diff --git a/include/net/netfilter/nf_flow_table.h b/include/net/netfilter/nf_flow_table.h
+index cd982f4a0f50..469f25606704 100644
+--- a/include/net/netfilter/nf_flow_table.h
++++ b/include/net/netfilter/nf_flow_table.h
+@@ -280,6 +280,11 @@ void nf_flow_table_free(struct nf_flowtable *flow_table);
+ 
+ void flow_offload_teardown(struct flow_offload *flow);
+ 
++int nf_flow_table_iterate(struct nf_flowtable *flow_table,
++                      void (*iter)(struct nf_flowtable *flowtable,
++                                   struct flow_offload *flow, void *data),
++                      void *data);
++
+ void nf_flow_snat_port(const struct flow_offload *flow,
+ 		       struct sk_buff *skb, unsigned int thoff,
+ 		       u8 protocol, enum flow_offload_tuple_dir dir);
 diff --git a/include/soc/rockchip/rockchip_sip.h b/include/soc/rockchip/rockchip_sip.h
 index c46a9ae2a2ab..fa7e0a2d72cc 100644
 --- a/include/soc/rockchip/rockchip_sip.h
@@ -12237,3 +13014,982 @@ index c46a9ae2a2ab..fa7e0a2d72cc 100644
 +} share_page_type_t;
  
  #endif
+diff --git a/include/uapi/linux/netfilter/xt_FLOWOFFLOAD.h b/include/uapi/linux/netfilter/xt_FLOWOFFLOAD.h
+new file mode 100644
+index 000000000000..5841bbe0e3db
+--- /dev/null
++++ b/include/uapi/linux/netfilter/xt_FLOWOFFLOAD.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef _XT_FLOWOFFLOAD_H
++#define _XT_FLOWOFFLOAD_H
++
++#include <linux/types.h>
++
++enum {
++	XT_FLOWOFFLOAD_HW	= 1 << 0,
++
++	XT_FLOWOFFLOAD_MASK	= XT_FLOWOFFLOAD_HW
++};
++
++struct xt_flowoffload_target_info {
++	__u32 flags;
++};
++
++#endif /* _XT_FLOWOFFLOAD_H */
+diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
+index 4b8d04640ff3..f07f67e78508 100644
+--- a/net/netfilter/Kconfig
++++ b/net/netfilter/Kconfig
+@@ -1024,6 +1024,15 @@ config NETFILTER_XT_TARGET_NOTRACK
+ 	depends on NETFILTER_ADVANCED
+ 	select NETFILTER_XT_TARGET_CT
+ 
++config NETFILTER_XT_TARGET_FLOWOFFLOAD
++	tristate '"FLOWOFFLOAD" target support'
++	depends on NF_FLOW_TABLE
++	depends on NETFILTER_INGRESS
++	help
++	  This option adds a `FLOWOFFLOAD' target, which uses the nf_flow_offload
++	  module to speed up processing of packets by bypassing the usual
++	  netfilter chains
++
+ config NETFILTER_XT_TARGET_RATEEST
+ 	tristate '"RATEEST" target support'
+ 	depends on NETFILTER_ADVANCED
+diff --git a/net/netfilter/Makefile b/net/netfilter/Makefile
+index 0f060d100880..4aa9528334b6 100644
+--- a/net/netfilter/Makefile
++++ b/net/netfilter/Makefile
+@@ -154,6 +154,7 @@ obj-$(CONFIG_NETFILTER_XT_TARGET_CLASSIFY) += xt_CLASSIFY.o
+ obj-$(CONFIG_NETFILTER_XT_TARGET_CONNSECMARK) += xt_CONNSECMARK.o
+ obj-$(CONFIG_NETFILTER_XT_TARGET_CT) += xt_CT.o
+ obj-$(CONFIG_NETFILTER_XT_TARGET_DSCP) += xt_DSCP.o
++obj-$(CONFIG_NETFILTER_XT_TARGET_FLOWOFFLOAD) += xt_FLOWOFFLOAD.o
+ obj-$(CONFIG_NETFILTER_XT_TARGET_HL) += xt_HL.o
+ obj-$(CONFIG_NETFILTER_XT_TARGET_HMARK) += xt_HMARK.o
+ obj-$(CONFIG_NETFILTER_XT_TARGET_LED) += xt_LED.o
+diff --git a/net/netfilter/nf_flow_table_core.c b/net/netfilter/nf_flow_table_core.c
+index 81c26a96c30b..09bf54066d6d 100644
+--- a/net/netfilter/nf_flow_table_core.c
++++ b/net/netfilter/nf_flow_table_core.c
+@@ -7,7 +7,6 @@
+ #include <linux/netdevice.h>
+ #include <net/ip.h>
+ #include <net/ip6_route.h>
+-#include <net/netfilter/nf_tables.h>
+ #include <net/netfilter/nf_flow_table.h>
+ #include <net/netfilter/nf_conntrack.h>
+ #include <net/netfilter/nf_conntrack_core.h>
+@@ -381,8 +380,7 @@ flow_offload_lookup(struct nf_flowtable *flow_table,
+ }
+ EXPORT_SYMBOL_GPL(flow_offload_lookup);
+ 
+-static int
+-nf_flow_table_iterate(struct nf_flowtable *flow_table,
++int nf_flow_table_iterate(struct nf_flowtable *flow_table,
+ 		      void (*iter)(struct nf_flowtable *flowtable,
+ 				   struct flow_offload *flow, void *data),
+ 		      void *data)
+@@ -436,6 +434,7 @@ static void nf_flow_offload_gc_step(struct nf_flowtable *flow_table,
+ 		nf_flow_offload_stats(flow_table, flow);
+ 	}
+ }
++EXPORT_SYMBOL_GPL(nf_flow_table_iterate);
+ 
+ void nf_flow_table_gc_run(struct nf_flowtable *flow_table)
+ {
+diff --git a/net/netfilter/xt_FLOWOFFLOAD.c b/net/netfilter/xt_FLOWOFFLOAD.c
+new file mode 100644
+index 000000000000..99cccdaba650
+--- /dev/null
++++ b/net/netfilter/xt_FLOWOFFLOAD.c
+@@ -0,0 +1,698 @@
++/*
++ * Copyright (C) 2018-2021 Felix Fietkau <nbd@nbd.name>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/netfilter.h>
++#include <linux/netfilter/xt_FLOWOFFLOAD.h>
++#include <linux/if_vlan.h>
++#include <net/ip.h>
++#include <net/netfilter/nf_conntrack.h>
++#include <net/netfilter/nf_conntrack_extend.h>
++#include <net/netfilter/nf_conntrack_helper.h>
++#include <net/netfilter/nf_flow_table.h>
++
++struct xt_flowoffload_hook {
++	struct hlist_node list;
++	struct nf_hook_ops ops;
++	struct net *net;
++	bool registered;
++	bool used;
++};
++
++struct xt_flowoffload_table {
++	struct nf_flowtable ft;
++	struct hlist_head hooks;
++	struct delayed_work work;
++};
++
++struct nf_forward_info {
++	const struct net_device *indev;
++	const struct net_device *outdev;
++	const struct net_device *hw_outdev;
++	struct id {
++		__u16	id;
++		__be16	proto;
++	} encap[NF_FLOW_TABLE_ENCAP_MAX];
++	u8 num_encaps;
++	u8 ingress_vlans;
++	u8 h_source[ETH_ALEN];
++	u8 h_dest[ETH_ALEN];
++	enum flow_offload_xmit_type xmit_type;
++};
++
++static DEFINE_SPINLOCK(hooks_lock);
++
++struct xt_flowoffload_table flowtable[2];
++
++static unsigned int
++xt_flowoffload_net_hook(void *priv, struct sk_buff *skb,
++			const struct nf_hook_state *state)
++{
++	struct vlan_ethhdr *veth;
++	__be16 proto;
++
++	switch (skb->protocol) {
++	case htons(ETH_P_8021Q):
++		veth = (struct vlan_ethhdr *)skb_mac_header(skb);
++		proto = veth->h_vlan_encapsulated_proto;
++		break;
++	case htons(ETH_P_PPP_SES):
++		proto = nf_flow_pppoe_proto(skb);
++		break;
++	default:
++		proto = skb->protocol;
++		break;
++	}
++
++	switch (proto) {
++	case htons(ETH_P_IP):
++		return nf_flow_offload_ip_hook(priv, skb, state);
++	case htons(ETH_P_IPV6):
++		return nf_flow_offload_ipv6_hook(priv, skb, state);
++	}
++
++	return NF_ACCEPT;
++}
++
++static int
++xt_flowoffload_create_hook(struct xt_flowoffload_table *table,
++			   struct net_device *dev)
++{
++	struct xt_flowoffload_hook *hook;
++	struct nf_hook_ops *ops;
++
++	hook = kzalloc(sizeof(*hook), GFP_ATOMIC);
++	if (!hook)
++		return -ENOMEM;
++
++	ops = &hook->ops;
++	ops->pf = NFPROTO_NETDEV;
++	ops->hooknum = NF_NETDEV_INGRESS;
++	ops->priority = 10;
++	ops->priv = &table->ft;
++	ops->hook = xt_flowoffload_net_hook;
++	ops->dev = dev;
++
++	hlist_add_head(&hook->list, &table->hooks);
++	mod_delayed_work(system_power_efficient_wq, &table->work, 0);
++
++	return 0;
++}
++
++static struct xt_flowoffload_hook *
++flow_offload_lookup_hook(struct xt_flowoffload_table *table,
++			 struct net_device *dev)
++{
++	struct xt_flowoffload_hook *hook;
++
++	hlist_for_each_entry(hook, &table->hooks, list) {
++		if (hook->ops.dev == dev)
++			return hook;
++	}
++
++	return NULL;
++}
++
++static void
++xt_flowoffload_check_device(struct xt_flowoffload_table *table,
++			    struct net_device *dev)
++{
++	struct xt_flowoffload_hook *hook;
++
++	if (!dev)
++		return;
++
++	spin_lock_bh(&hooks_lock);
++	hook = flow_offload_lookup_hook(table, dev);
++	if (hook)
++		hook->used = true;
++	else
++		xt_flowoffload_create_hook(table, dev);
++	spin_unlock_bh(&hooks_lock);
++}
++
++static void
++xt_flowoffload_register_hooks(struct xt_flowoffload_table *table)
++{
++	struct xt_flowoffload_hook *hook;
++
++restart:
++	hlist_for_each_entry(hook, &table->hooks, list) {
++		if (hook->registered)
++			continue;
++
++		hook->registered = true;
++		hook->net = dev_net(hook->ops.dev);
++		spin_unlock_bh(&hooks_lock);
++		nf_register_net_hook(hook->net, &hook->ops);
++		if (table->ft.flags & NF_FLOWTABLE_HW_OFFLOAD)
++			table->ft.type->setup(&table->ft, hook->ops.dev,
++					      FLOW_BLOCK_BIND);
++		spin_lock_bh(&hooks_lock);
++		goto restart;
++	}
++
++}
++
++static bool
++xt_flowoffload_cleanup_hooks(struct xt_flowoffload_table *table)
++{
++	struct xt_flowoffload_hook *hook;
++	bool active = false;
++
++restart:
++	spin_lock_bh(&hooks_lock);
++	hlist_for_each_entry(hook, &table->hooks, list) {
++		if (hook->used || !hook->registered) {
++			active = true;
++			continue;
++		}
++
++		hlist_del(&hook->list);
++		spin_unlock_bh(&hooks_lock);
++		if (table->ft.flags & NF_FLOWTABLE_HW_OFFLOAD)
++			table->ft.type->setup(&table->ft, hook->ops.dev,
++					      FLOW_BLOCK_UNBIND);
++		nf_unregister_net_hook(hook->net, &hook->ops);
++		kfree(hook);
++		goto restart;
++	}
++	spin_unlock_bh(&hooks_lock);
++
++	return active;
++}
++
++static void
++xt_flowoffload_check_hook(struct nf_flowtable *flowtable,
++			  struct flow_offload *flow, void *data)
++{
++	struct xt_flowoffload_table *table;
++	struct flow_offload_tuple *tuple0 = &flow->tuplehash[0].tuple;
++	struct flow_offload_tuple *tuple1 = &flow->tuplehash[1].tuple;
++	struct xt_flowoffload_hook *hook;
++
++	table = container_of(flowtable, struct xt_flowoffload_table, ft);
++
++	spin_lock_bh(&hooks_lock);
++	hlist_for_each_entry(hook, &table->hooks, list) {
++		if (hook->ops.dev->ifindex != tuple0->iifidx &&
++		    hook->ops.dev->ifindex != tuple1->iifidx)
++			continue;
++
++		hook->used = true;
++	}
++	spin_unlock_bh(&hooks_lock);
++}
++
++static void
++xt_flowoffload_hook_work(struct work_struct *work)
++{
++	struct xt_flowoffload_table *table;
++	struct xt_flowoffload_hook *hook;
++	int err;
++
++	table = container_of(work, struct xt_flowoffload_table, work.work);
++
++	spin_lock_bh(&hooks_lock);
++	xt_flowoffload_register_hooks(table);
++	hlist_for_each_entry(hook, &table->hooks, list)
++		hook->used = false;
++	spin_unlock_bh(&hooks_lock);
++
++	err = nf_flow_table_iterate(&table->ft, xt_flowoffload_check_hook,
++				    NULL);
++	if (err && err != -EAGAIN)
++		goto out;
++
++	if (!xt_flowoffload_cleanup_hooks(table))
++		return;
++
++out:
++	queue_delayed_work(system_power_efficient_wq, &table->work, HZ);
++}
++
++static bool
++xt_flowoffload_skip(struct sk_buff *skb, int family)
++{
++	if (skb_sec_path(skb))
++		return true;
++
++	if (family == NFPROTO_IPV4) {
++		const struct ip_options *opt = &(IPCB(skb)->opt);
++
++		if (unlikely(opt->optlen))
++			return true;
++	}
++
++	return false;
++}
++
++static enum flow_offload_xmit_type nf_xmit_type(struct dst_entry *dst)
++{
++	if (dst_xfrm(dst))
++		return FLOW_OFFLOAD_XMIT_XFRM;
++
++	return FLOW_OFFLOAD_XMIT_NEIGH;
++}
++
++static void nf_default_forward_path(struct nf_flow_route *route,
++				    struct dst_entry *dst_cache,
++				    enum ip_conntrack_dir dir,
++				    struct net_device **dev)
++{
++	dev[!dir] = dst_cache->dev;
++	route->tuple[!dir].in.ifindex	= dst_cache->dev->ifindex;
++	route->tuple[dir].dst		= dst_cache;
++	route->tuple[dir].xmit_type	= nf_xmit_type(dst_cache);
++}
++
++static bool nf_is_valid_ether_device(const struct net_device *dev)
++{
++	if (!dev || (dev->flags & IFF_LOOPBACK) || dev->type != ARPHRD_ETHER ||
++	    dev->addr_len != ETH_ALEN || !is_valid_ether_addr(dev->dev_addr))
++		return false;
++
++	return true;
++}
++
++static void nf_dev_path_info(const struct net_device_path_stack *stack,
++			     struct nf_forward_info *info,
++			     unsigned char *ha)
++{
++	const struct net_device_path *path;
++	int i;
++
++	memcpy(info->h_dest, ha, ETH_ALEN);
++
++	for (i = 0; i < stack->num_paths; i++) {
++		path = &stack->path[i];
++		switch (path->type) {
++		case DEV_PATH_ETHERNET:
++		case DEV_PATH_DSA:
++		case DEV_PATH_VLAN:
++		case DEV_PATH_PPPOE:
++			info->indev = path->dev;
++			if (is_zero_ether_addr(info->h_source))
++				memcpy(info->h_source, path->dev->dev_addr, ETH_ALEN);
++
++			if (path->type == DEV_PATH_ETHERNET)
++				break;
++			if (path->type == DEV_PATH_DSA) {
++				i = stack->num_paths;
++				break;
++			}
++
++			/* DEV_PATH_VLAN and DEV_PATH_PPPOE */
++			if (info->num_encaps >= NF_FLOW_TABLE_ENCAP_MAX) {
++				info->indev = NULL;
++				break;
++			}
++			if (!info->outdev)
++				info->outdev = path->dev;
++			info->encap[info->num_encaps].id = path->encap.id;
++			info->encap[info->num_encaps].proto = path->encap.proto;
++			info->num_encaps++;
++			if (path->type == DEV_PATH_PPPOE)
++				memcpy(info->h_dest, path->encap.h_dest, ETH_ALEN);
++			break;
++		case DEV_PATH_BRIDGE:
++			if (is_zero_ether_addr(info->h_source))
++				memcpy(info->h_source, path->dev->dev_addr, ETH_ALEN);
++
++			switch (path->bridge.vlan_mode) {
++			case DEV_PATH_BR_VLAN_UNTAG_HW:
++				info->ingress_vlans |= BIT(info->num_encaps - 1);
++				break;
++			case DEV_PATH_BR_VLAN_TAG:
++				info->encap[info->num_encaps].id = path->bridge.vlan_id;
++				info->encap[info->num_encaps].proto = path->bridge.vlan_proto;
++				info->num_encaps++;
++				break;
++			case DEV_PATH_BR_VLAN_UNTAG:
++				info->num_encaps--;
++				break;
++			case DEV_PATH_BR_VLAN_KEEP:
++				break;
++			}
++			break;
++		default:
++			info->indev = NULL;
++			break;
++		}
++	}
++	if (!info->outdev)
++		info->outdev = info->indev;
++
++	info->hw_outdev = info->indev;
++
++	if (nf_is_valid_ether_device(info->indev))
++		info->xmit_type = FLOW_OFFLOAD_XMIT_DIRECT;
++}
++
++static int nf_dev_fill_forward_path(const struct nf_flow_route *route,
++				     const struct dst_entry *dst_cache,
++				     const struct nf_conn *ct,
++				     enum ip_conntrack_dir dir, u8 *ha,
++				     struct net_device_path_stack *stack)
++{
++	const void *daddr = &ct->tuplehash[!dir].tuple.src.u3;
++	struct net_device *dev = dst_cache->dev;
++	struct neighbour *n;
++	u8 nud_state;
++
++	if (!nf_is_valid_ether_device(dev))
++		goto out;
++
++	n = dst_neigh_lookup(dst_cache, daddr);
++	if (!n)
++		return -1;
++
++	read_lock_bh(&n->lock);
++	nud_state = n->nud_state;
++	ether_addr_copy(ha, n->ha);
++	read_unlock_bh(&n->lock);
++	neigh_release(n);
++
++	if (!(nud_state & NUD_VALID))
++		return -1;
++
++out:
++	return dev_fill_forward_path(dev, ha, stack);
++}
++
++static void nf_dev_forward_path(struct nf_flow_route *route,
++				const struct nf_conn *ct,
++				enum ip_conntrack_dir dir,
++				struct net_device **devs)
++{
++	const struct dst_entry *dst = route->tuple[dir].dst;
++	struct net_device_path_stack stack;
++	struct nf_forward_info info = {};
++	unsigned char ha[ETH_ALEN];
++	int i;
++
++	if (nf_dev_fill_forward_path(route, dst, ct, dir, ha, &stack) >= 0)
++		nf_dev_path_info(&stack, &info, ha);
++
++	devs[!dir] = (struct net_device *)info.indev;
++	if (!info.indev)
++		return;
++
++	route->tuple[!dir].in.ifindex = info.indev->ifindex;
++	for (i = 0; i < info.num_encaps; i++) {
++		route->tuple[!dir].in.encap[i].id = info.encap[i].id;
++		route->tuple[!dir].in.encap[i].proto = info.encap[i].proto;
++	}
++	route->tuple[!dir].in.num_encaps = info.num_encaps;
++	route->tuple[!dir].in.ingress_vlans = info.ingress_vlans;
++
++	if (info.xmit_type == FLOW_OFFLOAD_XMIT_DIRECT) {
++		memcpy(route->tuple[dir].out.h_source, info.h_source, ETH_ALEN);
++		memcpy(route->tuple[dir].out.h_dest, info.h_dest, ETH_ALEN);
++		route->tuple[dir].out.ifindex = info.outdev->ifindex;
++		route->tuple[dir].out.hw_ifindex = info.hw_outdev->ifindex;
++		route->tuple[dir].xmit_type = info.xmit_type;
++	}
++}
++
++static int
++xt_flowoffload_route(struct sk_buff *skb, const struct nf_conn *ct,
++		     const struct xt_action_param *par,
++		     struct nf_flow_route *route, enum ip_conntrack_dir dir,
++		     struct net_device **devs)
++{
++	struct dst_entry *this_dst = skb_dst(skb);
++	struct dst_entry *other_dst = NULL;
++	struct flowi fl;
++
++	memset(&fl, 0, sizeof(fl));
++	switch (xt_family(par)) {
++	case NFPROTO_IPV4:
++		fl.u.ip4.daddr = ct->tuplehash[dir].tuple.src.u3.ip;
++		fl.u.ip4.flowi4_oif = xt_in(par)->ifindex;
++		break;
++	case NFPROTO_IPV6:
++		fl.u.ip6.saddr = ct->tuplehash[!dir].tuple.dst.u3.in6;
++		fl.u.ip6.daddr = ct->tuplehash[dir].tuple.src.u3.in6;
++		fl.u.ip6.flowi6_oif = xt_in(par)->ifindex;
++		break;
++	}
++
++	nf_route(xt_net(par), &other_dst, &fl, false, xt_family(par));
++	if (!other_dst)
++		return -ENOENT;
++
++	nf_default_forward_path(route, this_dst, dir, devs);
++	nf_default_forward_path(route, other_dst, !dir, devs);
++
++	if (route->tuple[dir].xmit_type	== FLOW_OFFLOAD_XMIT_NEIGH &&
++	    route->tuple[!dir].xmit_type == FLOW_OFFLOAD_XMIT_NEIGH) {
++		nf_dev_forward_path(route, ct, dir, devs);
++		nf_dev_forward_path(route, ct, !dir, devs);
++	}
++
++	return 0;
++}
++
++static unsigned int
++flowoffload_tg(struct sk_buff *skb, const struct xt_action_param *par)
++{
++	struct xt_flowoffload_table *table;
++	const struct xt_flowoffload_target_info *info = par->targinfo;
++	struct tcphdr _tcph, *tcph = NULL;
++	enum ip_conntrack_info ctinfo;
++	enum ip_conntrack_dir dir;
++	struct nf_flow_route route = {};
++	struct flow_offload *flow = NULL;
++	struct net_device *devs[2] = {};
++	struct nf_conn *ct;
++	struct net *net;
++
++	if (xt_flowoffload_skip(skb, xt_family(par)))
++		return XT_CONTINUE;
++
++	ct = nf_ct_get(skb, &ctinfo);
++	if (ct == NULL)
++		return XT_CONTINUE;
++
++	switch (ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple.dst.protonum) {
++	case IPPROTO_TCP:
++		if (ct->proto.tcp.state != TCP_CONNTRACK_ESTABLISHED)
++			return XT_CONTINUE;
++
++		tcph = skb_header_pointer(skb, par->thoff,
++					  sizeof(_tcph), &_tcph);
++		if (unlikely(!tcph || tcph->fin || tcph->rst))
++			return XT_CONTINUE;
++		break;
++	case IPPROTO_UDP:
++		break;
++	default:
++		return XT_CONTINUE;
++	}
++
++	if (nf_ct_ext_exist(ct, NF_CT_EXT_HELPER) ||
++	    ct->status & (IPS_SEQ_ADJUST | IPS_NAT_CLASH))
++		return XT_CONTINUE;
++
++	if (!nf_ct_is_confirmed(ct))
++		return XT_CONTINUE;
++
++	devs[dir] = xt_out(par);
++	devs[!dir] = xt_in(par);
++
++	if (!devs[dir] || !devs[!dir])
++		return XT_CONTINUE;
++
++	if (test_and_set_bit(IPS_OFFLOAD_BIT, &ct->status))
++		return XT_CONTINUE;
++
++	dir = CTINFO2DIR(ctinfo);
++
++	if (xt_flowoffload_route(skb, ct, par, &route, dir, devs) < 0)
++		goto err_flow_route;
++
++	flow = flow_offload_alloc(ct);
++	if (!flow)
++		goto err_flow_alloc;
++
++	if (flow_offload_route_init(flow, &route) < 0)
++		goto err_flow_add;
++
++	if (tcph) {
++		ct->proto.tcp.seen[0].flags |= IP_CT_TCP_FLAG_BE_LIBERAL;
++		ct->proto.tcp.seen[1].flags |= IP_CT_TCP_FLAG_BE_LIBERAL;
++	}
++
++	table = &flowtable[!!(info->flags & XT_FLOWOFFLOAD_HW)];
++
++	net = read_pnet(&table->ft.net);
++	if (!net)
++		write_pnet(&table->ft.net, xt_net(par));
++
++	if (flow_offload_add(&table->ft, flow) < 0)
++		goto err_flow_add;
++
++	xt_flowoffload_check_device(table, devs[0]);
++	xt_flowoffload_check_device(table, devs[1]);
++
++	dst_release(route.tuple[!dir].dst);
++
++	return XT_CONTINUE;
++
++err_flow_add:
++	flow_offload_free(flow);
++err_flow_alloc:
++	dst_release(route.tuple[!dir].dst);
++err_flow_route:
++	clear_bit(IPS_OFFLOAD_BIT, &ct->status);
++
++	return XT_CONTINUE;
++}
++
++static int flowoffload_chk(const struct xt_tgchk_param *par)
++{
++	struct xt_flowoffload_target_info *info = par->targinfo;
++
++	if (info->flags & ~XT_FLOWOFFLOAD_MASK)
++		return -EINVAL;
++
++	return 0;
++}
++
++static struct xt_target offload_tg_reg __read_mostly = {
++	.family		= NFPROTO_UNSPEC,
++	.name		= "FLOWOFFLOAD",
++	.revision	= 0,
++	.targetsize	= sizeof(struct xt_flowoffload_target_info),
++	.usersize	= sizeof(struct xt_flowoffload_target_info),
++	.checkentry	= flowoffload_chk,
++	.target		= flowoffload_tg,
++	.me		= THIS_MODULE,
++};
++
++static int flow_offload_netdev_event(struct notifier_block *this,
++				     unsigned long event, void *ptr)
++{
++	struct xt_flowoffload_hook *hook0, *hook1;
++	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
++
++	if (event != NETDEV_UNREGISTER)
++		return NOTIFY_DONE;
++
++	spin_lock_bh(&hooks_lock);
++	hook0 = flow_offload_lookup_hook(&flowtable[0], dev);
++	if (hook0)
++		hlist_del(&hook0->list);
++
++	hook1 = flow_offload_lookup_hook(&flowtable[1], dev);
++	if (hook1)
++		hlist_del(&hook1->list);
++	spin_unlock_bh(&hooks_lock);
++
++	if (hook0) {
++		nf_unregister_net_hook(hook0->net, &hook0->ops);
++		kfree(hook0);
++	}
++
++	if (hook1) {
++		nf_unregister_net_hook(hook1->net, &hook1->ops);
++		kfree(hook1);
++	}
++
++	nf_flow_table_cleanup(dev);
++
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block flow_offload_netdev_notifier = {
++	.notifier_call	= flow_offload_netdev_event,
++};
++
++static int nf_flow_rule_route_inet(struct net *net,
++				   const struct flow_offload *flow,
++				   enum flow_offload_tuple_dir dir,
++				   struct nf_flow_rule *flow_rule)
++{
++	const struct flow_offload_tuple *flow_tuple = &flow->tuplehash[dir].tuple;
++	int err;
++
++	switch (flow_tuple->l3proto) {
++	case NFPROTO_IPV4:
++		err = nf_flow_rule_route_ipv4(net, flow, dir, flow_rule);
++		break;
++	case NFPROTO_IPV6:
++		err = nf_flow_rule_route_ipv6(net, flow, dir, flow_rule);
++		break;
++	default:
++		err = -1;
++		break;
++	}
++
++	return err;
++}
++
++static struct nf_flowtable_type flowtable_inet = {
++	.family		= NFPROTO_INET,
++	.init		= nf_flow_table_init,
++	.setup		= nf_flow_table_offload_setup,
++	.action		= nf_flow_rule_route_inet,
++	.free		= nf_flow_table_free,
++	.hook		= xt_flowoffload_net_hook,
++	.owner		= THIS_MODULE,
++};
++
++static int init_flowtable(struct xt_flowoffload_table *tbl)
++{
++	INIT_DELAYED_WORK(&tbl->work, xt_flowoffload_hook_work);
++	tbl->ft.type = &flowtable_inet;
++	tbl->ft.flags = NF_FLOWTABLE_COUNTER;
++
++	return nf_flow_table_init(&tbl->ft);
++}
++
++static int __init xt_flowoffload_tg_init(void)
++{
++	int ret;
++
++	register_netdevice_notifier(&flow_offload_netdev_notifier);
++
++	ret = init_flowtable(&flowtable[0]);
++	if (ret)
++		return ret;
++
++	ret = init_flowtable(&flowtable[1]);
++	if (ret)
++		goto cleanup;
++
++	flowtable[1].ft.flags |= NF_FLOWTABLE_HW_OFFLOAD;
++
++	ret = xt_register_target(&offload_tg_reg);
++	if (ret)
++		goto cleanup2;
++
++	return 0;
++
++cleanup2:
++	nf_flow_table_free(&flowtable[1].ft);
++cleanup:
++	nf_flow_table_free(&flowtable[0].ft);
++	return ret;
++}
++
++static void __exit xt_flowoffload_tg_exit(void)
++{
++	xt_unregister_target(&offload_tg_reg);
++	unregister_netdevice_notifier(&flow_offload_netdev_notifier);
++	nf_flow_table_free(&flowtable[0].ft);
++	nf_flow_table_free(&flowtable[1].ft);
++}
++
++MODULE_LICENSE("GPL");
++module_init(xt_flowoffload_tg_init);
++module_exit(xt_flowoffload_tg_exit);
+diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+index 0904827e2f3d..97f57297815e 100644
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -1346,7 +1346,7 @@ config SND_SOC_RT5645
+ 	depends on I2C
+ 
+ config SND_SOC_RT5651
+-	tristate
++	tristate "Realtek RT5651 CODEC"
+ 	depends on I2C
+ 
+ config SND_SOC_RT5659
+diff --git a/sound/soc/codecs/rt5651.c b/sound/soc/codecs/rt5651.c
+index df90af906563..8760732f4667 100644
+--- a/sound/soc/codecs/rt5651.c
++++ b/sound/soc/codecs/rt5651.c
+@@ -10,6 +10,7 @@
+ #include <linux/init.h>
+ #include <linux/delay.h>
+ #include <linux/pm.h>
++#include <linux/clk.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/i2c.h>
+ #include <linux/regmap.h>
+@@ -1304,7 +1305,7 @@ static int rt5651_hw_params(struct snd_pcm_substream *substream,
+ 	dev_dbg(dai->dev, "bclk is %dHz and lrck is %dHz\n",
+ 		rt5651->bclk[dai->id], rt5651->lrck[dai->id]);
+ 	dev_dbg(dai->dev, "bclk_ms is %d and pre_div is %d for iis %d\n",
+-				bclk_ms, pre_div, dai->id);
++		bclk_ms, pre_div, dai->id);
+ 
+ 	switch (params_width(params)) {
+ 	case 16:
+@@ -1421,6 +1422,8 @@ static int rt5651_set_dai_sysclk(struct snd_soc_dai *dai,
+ 	switch (clk_id) {
+ 	case RT5651_SCLK_S_MCLK:
+ 		reg_val |= RT5651_SCLK_SRC_MCLK;
++		if (!IS_ERR(rt5651->mclk))
++			clk_set_rate(rt5651->mclk, freq);
+ 		break;
+ 	case RT5651_SCLK_S_PLL1:
+ 		reg_val |= RT5651_SCLK_SRC_PLL1;
+@@ -1474,11 +1477,11 @@ static int rt5651_set_dai_pll(struct snd_soc_dai *dai, int pll_id, int source,
+ 		break;
+ 	case RT5651_PLL1_S_BCLK1:
+ 		snd_soc_component_update_bits(component, RT5651_GLB_CLK,
+-				RT5651_PLL1_SRC_MASK, RT5651_PLL1_SRC_BCLK1);
++			RT5651_PLL1_SRC_MASK, RT5651_PLL1_SRC_BCLK1);
+ 		break;
+ 	case RT5651_PLL1_S_BCLK2:
+-			snd_soc_component_update_bits(component, RT5651_GLB_CLK,
+-				RT5651_PLL1_SRC_MASK, RT5651_PLL1_SRC_BCLK2);
++		snd_soc_component_update_bits(component, RT5651_GLB_CLK,
++			RT5651_PLL1_SRC_MASK, RT5651_PLL1_SRC_BCLK2);
+ 		break;
+ 	default:
+ 		dev_err(component->dev, "Unknown PLL source %d\n", source);
+@@ -1511,9 +1514,13 @@ static int rt5651_set_dai_pll(struct snd_soc_dai *dai, int pll_id, int source,
+ static int rt5651_set_bias_level(struct snd_soc_component *component,
+ 			enum snd_soc_bias_level level)
+ {
++	struct rt5651_priv *rt5651 = snd_soc_component_get_drvdata(component);
++
+ 	switch (level) {
+ 	case SND_SOC_BIAS_PREPARE:
+ 		if (SND_SOC_BIAS_STANDBY == snd_soc_component_get_bias_level(component)) {
++			if (!IS_ERR(rt5651->mclk))
++				clk_prepare_enable(rt5651->mclk);
+ 			if (snd_soc_component_read(component, RT5651_PLL_MODE_1) & 0x9200)
+ 				snd_soc_component_update_bits(component, RT5651_D_MISC,
+ 						    0xc00, 0xc00);
+@@ -1531,6 +1538,9 @@ static int rt5651_set_bias_level(struct snd_soc_component *component,
+ 				RT5651_PWR_FV1 | RT5651_PWR_FV2,
+ 				RT5651_PWR_FV1 | RT5651_PWR_FV2);
+ 			snd_soc_component_update_bits(component, RT5651_D_MISC, 0x1, 0x1);
++		} else if (SND_SOC_BIAS_PREPARE == snd_soc_component_get_bias_level(component)) {
++			if (!IS_ERR(rt5651->mclk))
++				clk_disable_unprepare(rt5651->mclk);
+ 		}
+ 		break;
+ 
+@@ -2061,6 +2071,10 @@ static int rt5651_probe(struct snd_soc_component *component)
+ 
+ 	rt5651->component = component;
+ 
++	rt5651->mclk = devm_clk_get_optional(component->dev, "mclk");
++	if (PTR_ERR(rt5651->mclk) == -EPROBE_DEFER)
++		return -EPROBE_DEFER;
++
+ 	snd_soc_component_update_bits(component, RT5651_PWR_ANLG1,
+ 		RT5651_PWR_LDO_DVO_MASK, RT5651_PWR_LDO_DVO_1_2V);
+ 
+@@ -2068,6 +2082,12 @@ static int rt5651_probe(struct snd_soc_component *component)
+ 
+ 	rt5651_apply_properties(component);
+ 
++	if (rt5651->jd_src == RT5651_JD_NULL) {
++		snd_soc_component_force_enable_pin(component, "LDO");
++		snd_soc_component_force_enable_pin(component, "micbias1");
++		snd_soc_dapm_sync(snd_soc_component_get_dapm(component));
++	}
++
+ 	return 0;
+ }
+ 
+@@ -2104,6 +2124,7 @@ static const struct snd_soc_dai_ops rt5651_aif_dai_ops = {
+ 	.set_fmt = rt5651_set_dai_fmt,
+ 	.set_sysclk = rt5651_set_dai_sysclk,
+ 	.set_pll = rt5651_set_dai_pll,
++	.no_capture_mute = 1,
+ };
+ 
+ static struct snd_soc_dai_driver rt5651_dai[] = {
+@@ -2273,6 +2294,13 @@ static int rt5651_i2c_probe(struct i2c_client *i2c)
+ 	return ret;
+ }
+ 
++static void rt5651_i2c_shutdown(struct i2c_client *client)
++{
++	struct rt5651_priv *rt5651 = i2c_get_clientdata(client);
++
++	regmap_write(rt5651->regmap, RT5651_RESET, 0);
++}
++
+ static struct i2c_driver rt5651_i2c_driver = {
+ 	.driver = {
+ 		.name = "rt5651",
+@@ -2280,6 +2308,7 @@ static struct i2c_driver rt5651_i2c_driver = {
+ 		.of_match_table = of_match_ptr(rt5651_of_match),
+ 	},
+ 	.probe_new = rt5651_i2c_probe,
++	.shutdown = rt5651_i2c_shutdown,
+ 	.id_table = rt5651_i2c_id,
+ };
+ module_i2c_driver(rt5651_i2c_driver);
+diff --git a/sound/soc/codecs/rt5651.h b/sound/soc/codecs/rt5651.h
+index 20c33a3ece37..17524fa9fdfc 100644
+--- a/sound/soc/codecs/rt5651.h
++++ b/sound/soc/codecs/rt5651.h
+@@ -2097,6 +2097,7 @@ struct rt5651_priv {
+ 
+ 	int dmic_en;
+ 	bool hp_mute;
++	struct clk *mclk;
+ };
+ 
+ #endif /* __RT5651_H__ */
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index fbb682747f59..76c842d0ca5e 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -614,9 +614,14 @@ static int simple_get_dais_count(struct asoc_simple_priv *priv,
+ static int simple_soc_probe(struct snd_soc_card *card)
+ {
+ 	struct asoc_simple_priv *priv = snd_soc_card_get_drvdata(card);
++	char prop[128];
++	const char *hp_pin = NULL;
+ 	int ret;
+ 
+-	ret = asoc_simple_init_hp(card, &priv->hp_jack, PREFIX);
++	snprintf(prop, sizeof(prop), "%shp-pin-name", PREFIX);
++	of_property_read_string(card->dev->of_node, prop, &hp_pin);
++
++	ret = asoc_simple_init_jack(card, &priv->hp_jack, 1, PREFIX, (char *)hp_pin);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -748,7 +753,21 @@ static struct platform_driver asoc_simple_card = {
+ 	.remove = asoc_simple_remove,
+ };
+ 
++#ifdef CONFIG_ARCH_ROCKCHIP
++static int __init asoc_simple_init(void)
++{
++    return platform_driver_register(&asoc_simple_card);
++}
++late_initcall(asoc_simple_init);
++
++static void __exit asoc_simple_exit(void)
++{
++    platform_driver_unregister(&asoc_simple_card);
++}
++module_exit(asoc_simple_exit)
++#else
+ module_platform_driver(asoc_simple_card);
++#endif
+ 
+ MODULE_ALIAS("platform:asoc-simple-card");
+ MODULE_LICENSE("GPL v2");

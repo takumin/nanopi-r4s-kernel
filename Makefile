@@ -16,8 +16,9 @@ BUILD_DIR      ?= $(BASE_DIR)/build
 SOURCE_DIR     ?= $(BASE_DIR)/source
 DISTRIB_DIR    ?= $(BASE_DIR)/distrib
 DOWNLOAD_DIR   ?= $(CURDIR)/.dl
-CROSS_COMPILE  ?= aarch64-none-linux-gnu-
-LINUX_VERSION  ?= 5.15.70
+CROSS_COMPILE  ?= aarch64-linux-gnu-
+LINUX_VERSION  ?= 6.1.55
+LINUX_MAJOR    ?= $(basename $(basename $(LINUX_VERSION)))
 UBUNTU_RELEASE ?= jammy
 
 .PHONY: default
@@ -26,7 +27,7 @@ default: initrd
 .PHONY: download
 download:
 ifeq ($(wildcard $(DOWNLOAD_DIR)/linux-$(LINUX_VERSION).tar.xz),)
-	@wget -P $(DOWNLOAD_DIR) https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-$(LINUX_VERSION).tar.xz
+	@wget -P $(DOWNLOAD_DIR) https://cdn.kernel.org/pub/linux/kernel/v$(LINUX_MAJOR).x/linux-$(LINUX_VERSION).tar.xz
 endif
 ifeq ($(wildcard $(DOWNLOAD_DIR)/$(UBUNTU_RELEASE)-base-arm64.tar.gz),)
 	@wget -P $(DOWNLOAD_DIR) http://cdimage.ubuntu.com/ubuntu-base/$(UBUNTU_RELEASE)/daily/current/$(UBUNTU_RELEASE)-base-arm64.tar.gz
@@ -46,7 +47,7 @@ endif
 .PHONY: patch
 patch: extract
 ifeq ($(wildcard $(SOURCE_DIR)/linux/arch/arm64/configs/nanopi4_linux_defconfig),)
-	patch -d $(SOURCE_DIR)/linux -p 1 -i $(CURDIR)/friendlyarm-kernel-rockchip-v5.15.y.patch
+	@patch -d $(SOURCE_DIR)/linux -p 1 -i $(CURDIR)/friendlyarm-kernel-rockchip-nanopi-r2-v6.1.y.patch
 endif
 
 .PHONY: defconfig
@@ -106,6 +107,8 @@ install: build
 		INSTALL_DTBS_PATH=$(BUILD_DIR)/boot/dtbs \
 		INSTALL_PATH=$(BUILD_DIR)/boot \
 		zinstall modules_install headers_install dtbs_install
+	@rm $(BUILD_DIR)/modules/lib/modules/$(LINUX_VERSION)/build
+	@rm $(BUILD_DIR)/modules/lib/modules/$(LINUX_VERSION)/source
 
 .PHONY: rootfs
 rootfs: install
